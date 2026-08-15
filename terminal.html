@@ -7,9 +7,8 @@
   <link rel="stylesheet" href="scranton-ui.css">
   <script src="scranton-components.js" defer></script>
   <style>
-    /* Custom High Density Terminal Adjustments */
     .sc-table-terminal td, .sc-table-terminal th {
-      padding: 2px 4px;
+      padding: 3px 6px;
       font-size: 10.5px;
       font-family: var(--sc-font-mono);
     }
@@ -25,13 +24,13 @@
     </div>
     
     <div class="d-flex align-center gap-3">
-      <nav class="d-flex gap-2">
-        <a href="index.html" class="sc-btn sc-btn-sm">← Docs Hub</a>
-        <a href="dashboard.html" class="sc-btn sc-btn-sm">1. Enterprise Sales</a>
-        <a href="tools.html" class="sc-btn sc-btn-sm">2. Dwight Tools</a>
-        <a href="control-panel.html" class="sc-btn sc-btn-sm">3. Toby HR</a>
-        <a href="terminal.html" class="sc-btn sc-btn-sm sc-btn-warning">4. Trading Terminal</a>
-        <a href="workflow.html" class="sc-btn sc-btn-sm">5. Command Tree</a>
+      <nav class="d-flex gap-2" aria-label="Main Application Navigation">
+        <a href="index.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Documentation Hub">← Docs Hub</a>
+        <a href="dashboard.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Sales Ledger">1. Enterprise Sales</a>
+        <a href="tools.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Dwight Security Tools">2. Dwight Tools</a>
+        <a href="control-panel.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Toby HR System">3. Toby HR</a>
+        <a href="terminal.html" class="sc-btn sc-btn-sm sc-btn-warning" aria-current="page" data-sc-tooltip-pos="bottom" data-sc-tooltip="Live Market Watch">4. Trading Terminal</a>
+        <a href="workflow.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Chain of Command">5. Command Tree</a>
       </nav>
       <scranton-theme-switcher></scranton-theme-switcher>
     </div>
@@ -49,68 +48,69 @@
         <div class="sc-pane" style="border:1px solid #26334d;">
           <div class="sc-pane-header">
             <span>Paper Stock Watchlist & Live Bid/Ask</span>
-            <div class="d-flex align-center gap-2">
-              <span class="sc-led sc-led-green sc-led-blink"></span>
+            <div class="sc-card-header-actions">
+              <span class="sc-led sc-led-green sc-led-blink"></span><span class="sc-sr-only">Status: Live Feed Active</span>
               <span class="text-success" style="font-size:10px;">FEED ACTIVE</span>
+              <button type="button" class="sc-pane-toggle" aria-label="Toggle Pane" aria-expanded="true">▼</button>
             </div>
           </div>
           <div class="sc-pane-body-nopad">
             <table class="sc-table sc-table-striped sc-table-hover sc-table-terminal">
               <thead>
                 <tr>
-                  <th>Ticker</th>
-                  <th>Company Name</th>
-                  <th>Bid ($)</th>
-                  <th>Ask ($)</th>
-                  <th>Chg %</th>
-                  <th>Volume</th>
+                  <th class="sortable">Ticker <span class="sc-sort-indicator">▲</span></th>
+                  <th class="sortable">Company Name</th>
+                  <th class="th-num sortable">Bid ($)</th>
+                  <th class="th-num sortable">Ask ($)</th>
+                  <th class="th-num sortable">Chg % <span class="sc-sort-indicator">▼</span></th>
+                  <th class="th-num sortable">Volume</th>
                   <th>Sparkline</th>
                 </tr>
               </thead>
               <tbody id="ticker-tbody">
-                <tr class="sc-tick-up">
+                <tr id="row-dmn">
                   <td class="fw-bold text-warning">DMN</td>
                   <td>Dunder Mifflin Inc.</td>
-                  <td class="font-mono" id="dmn-bid">48.20</td>
-                  <td class="font-mono" id="dmn-ask">48.25</td>
-                  <td class="text-success fw-bold">+4.12%</td>
-                  <td class="font-mono">1,489,000</td>
+                  <td class="td-num" id="dmn-bid">48.20</td>
+                  <td class="td-num" id="dmn-ask">48.25</td>
+                  <td class="td-num text-success fw-bold">+4.12%</td>
+                  <td class="td-num">1,489,000</td>
                   <td><scranton-sparkline values="40,42,41,45,44,48" width="50" height="14" color="#22c55e"></scranton-sparkline></td>
                 </tr>
-                <tr>
+                <tr id="row-mspc">
                   <td class="fw-bold text-accent">MSPC</td>
                   <td>Michael Scott Paper Co.</td>
-                  <td class="font-mono" id="mspc-bid">2.45</td>
-                  <td class="font-mono" id="mspc-ask">2.48</td>
-                  <td class="text-success fw-bold">+18.50%</td>
-                  <td class="font-mono">890,200</td>
+                  <td class="td-num" id="mspc-bid">2.45</td>
+                  <td class="td-num" id="mspc-ask">2.48</td>
+                  <td class="td-num text-success fw-bold">+18.50%</td>
+                  <td class="td-num">890,200</td>
                   <td><scranton-sparkline values="1,1.2,1.5,1.8,2.1,2.48" width="50" height="14" color="#38bdf8"></scranton-sparkline></td>
                 </tr>
-                <tr class="sc-tick-down">
+                <tr id="row-prnc">
                   <td class="fw-bold text-danger">PRNC</td>
                   <td>Prince Family Paper</td>
-                  <td class="font-mono">12.10</td>
-                  <td class="font-mono">12.15</td>
-                  <td class="text-danger fw-bold">-14.20%</td>
-                  <td class="font-mono">42,000</td>
+                  <td class="td-num">12.10</td>
+                  <td class="td-num">12.15</td>
+                  <td class="td-num text-danger fw-bold">-14.20%</td>
+                  <td class="td-num">42,000</td>
                   <td><scranton-sparkline values="20,18,16,14,13,12.1" width="50" height="14" color="#ef4444"></scranton-sparkline></td>
                 </tr>
-                <tr>
+                <tr id="row-vrfg">
                   <td class="fw-bold text-primary">VRFG</td>
                   <td>Vance Refrigeration</td>
-                  <td class="font-mono">104.50</td>
-                  <td class="font-mono">104.80</td>
-                  <td class="text-success fw-bold">+0.85%</td>
-                  <td class="font-mono">310,000</td>
+                  <td class="td-num">104.50</td>
+                  <td class="td-num">104.80</td>
+                  <td class="td-num text-success fw-bold">+0.85%</td>
+                  <td class="td-num">310,000</td>
                   <td><scranton-sparkline values="100,102,101,103,104,104.5" width="50" height="14" color="#3b82f6"></scranton-sparkline></td>
                 </tr>
-                <tr>
+                <tr id="row-schr">
                   <td class="fw-bold text-beet">SCHR</td>
                   <td>Schrute Beet Agricultural</td>
-                  <td class="font-mono">88.40</td>
-                  <td class="font-mono">88.60</td>
-                  <td class="text-success fw-bold">+6.40%</td>
-                  <td class="font-mono">540,100</td>
+                  <td class="td-num">88.40</td>
+                  <td class="td-num">88.60</td>
+                  <td class="td-num text-success fw-bold">+6.40%</td>
+                  <td class="td-num">540,100</td>
                   <td><scranton-sparkline values="75,80,82,85,86,88.4" width="50" height="14" color="#fbbf24"></scranton-sparkline></td>
                 </tr>
               </tbody>
@@ -118,11 +118,16 @@
           </div>
         </div>
 
+        <div class="sc-splitter"></div>
+
         <!-- Q2: Order Book Simulation -->
         <div class="sc-pane" style="border:1px solid #26334d;">
           <div class="sc-pane-header">
             <span>Depth Order Book — MSPC Arbitrage</span>
-            <span class="sc-badge sc-badge-warning">VAN PANIC BUYING</span>
+            <div class="sc-card-header-actions">
+              <span class="sc-badge sc-badge-warning">VAN PANIC BUYING</span>
+              <button type="button" class="sc-pane-toggle" aria-label="Toggle Pane" aria-expanded="true">▼</button>
+            </div>
           </div>
           <div class="sc-pane-body-nopad d-flex">
             
@@ -132,22 +137,22 @@
               <table class="sc-table sc-table-terminal">
                 <thead>
                   <tr>
-                    <th>Qty (Reams)</th>
-                    <th>Bid Price ($)</th>
+                    <th class="th-num sortable">Qty (Reams)</th>
+                    <th class="th-num sortable">Bid Price ($)</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr style="background:rgba(34, 197, 94, 0.15);">
-                    <td class="font-mono">50,000</td>
-                    <td class="font-mono text-success fw-bold">2.45</td>
+                    <td class="td-num">50,000</td>
+                    <td class="td-num text-success fw-bold">2.45</td>
                   </tr>
                   <tr style="background:rgba(34, 197, 94, 0.10);">
-                    <td class="font-mono">12,000</td>
-                    <td class="font-mono text-success">2.44</td>
+                    <td class="td-num">12,000</td>
+                    <td class="td-num text-success">2.44</td>
                   </tr>
                   <tr style="background:rgba(34, 197, 94, 0.05);">
-                    <td class="font-mono">85,000</td>
-                    <td class="font-mono text-success">2.42</td>
+                    <td class="td-num">85,000</td>
+                    <td class="td-num text-success">2.42</td>
                   </tr>
                 </tbody>
               </table>
@@ -159,22 +164,22 @@
               <table class="sc-table sc-table-terminal">
                 <thead>
                   <tr>
-                    <th>Ask Price ($)</th>
-                    <th>Qty (Reams)</th>
+                    <th class="th-num sortable">Ask Price ($)</th>
+                    <th class="th-num sortable">Qty (Reams)</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr style="background:rgba(239, 68, 68, 0.15);">
-                    <td class="font-mono text-danger fw-bold">2.48</td>
-                    <td class="font-mono">10,000</td>
+                    <td class="td-num text-danger fw-bold">2.48</td>
+                    <td class="td-num">10,000</td>
                   </tr>
                   <tr style="background:rgba(239, 68, 68, 0.10);">
-                    <td class="font-mono text-danger">2.50</td>
-                    <td class="font-mono">45,000</td>
+                    <td class="td-num text-danger">2.50</td>
+                    <td class="td-num">45,000</td>
                   </tr>
                   <tr style="background:rgba(239, 68, 68, 0.05);">
-                    <td class="font-mono text-danger">2.55</td>
-                    <td class="font-mono">120,000</td>
+                    <td class="td-num text-danger">2.55</td>
+                    <td class="td-num">120,000</td>
                   </tr>
                 </tbody>
               </table>
@@ -192,13 +197,16 @@
         <div class="sc-pane" style="border:1px solid #26334d;">
           <div class="sc-pane-header">
             <span>Rapid Order Execution Console (Pam & Ryan Desk)</span>
-            <span class="sc-badge sc-badge-success">CONNECTED</span>
+            <div class="sc-card-header-actions">
+              <span class="sc-badge sc-badge-success">CONNECTED</span>
+              <button type="button" class="sc-pane-toggle" aria-label="Toggle Pane" aria-expanded="true">▼</button>
+            </div>
           </div>
           <div class="sc-pane-body">
             
             <div class="sc-form-group">
-              <label class="sc-label">Target Account / Client</label>
-              <select class="sc-select">
+              <label for="client-select" class="sc-label">Target Account / Client</label>
+              <select id="client-select" class="sc-select">
                 <option>Lackawanna County (High Volume)</option>
                 <option>Blue Cross PA (Jim Account)</option>
                 <option>Scranton Church (Pam Contact)</option>
@@ -208,31 +216,36 @@
             <div class="sc-row">
               <div class="sc-col-6">
                 <div class="sc-form-group">
-                  <label class="sc-label">Ream Quantity</label>
-                  <input type="number" class="sc-input font-mono" value="10000">
+                  <label for="order-qty" class="sc-label">Ream Quantity <span class="sc-required">*</span></label>
+                  <input id="order-qty" type="number" class="sc-input font-mono" value="10000" min="1" aria-required="true">
                 </div>
               </div>
               <div class="sc-col-6">
                 <div class="sc-form-group">
-                  <label class="sc-label">Discount Price / Unit</label>
-                  <input type="text" class="sc-input font-mono" value="$2.45">
+                  <label for="order-price" class="sc-label">Discount Price / Unit <span class="sc-required">*</span></label>
+                  <input id="order-price" type="text" class="sc-input font-mono" value="$2.45" aria-required="true">
                 </div>
               </div>
             </div>
 
             <div class="d-flex gap-2 mt-2">
-              <button class="sc-btn sc-btn-success w-100" onclick="scrantonToast('BUY ORDER EXECUTED: 10,000 Reams delivered by Van!', 'success')">BUY PAPER (10K REAMS)</button>
-              <button class="sc-btn sc-btn-danger w-100" onclick="scrantonToast('SHORT SELL EXECUTED against Dunder Mifflin', 'danger')">SHORT DUNDER MIFFLIN</button>
+              <button type="button" class="sc-btn sc-btn-success w-100" onclick="executeOrder('BUY')">BUY PAPER</button>
+              <button type="button" class="sc-btn sc-btn-danger w-100" onclick="executeOrder('SHORT')">SHORT DUNDER MIFFLIN</button>
             </div>
 
           </div>
         </div>
 
+        <div class="sc-splitter"></div>
+
         <!-- Q4: Real-time News Wire Feed -->
         <div class="sc-pane" style="border:1px solid #26334d;">
           <div class="sc-pane-header">
             <span>Market News & Wire Feed</span>
-            <span class="sc-badge">SCRANTON TIMES</span>
+            <div class="sc-card-header-actions">
+              <span class="sc-badge">SCRANTON TIMES</span>
+              <button type="button" class="sc-pane-toggle" aria-label="Toggle Pane" aria-expanded="true">▼</button>
+            </div>
           </div>
           <div class="sc-pane-body-nopad">
             <div class="p-2" style="font-size:11px; line-height:1.5;">
@@ -261,18 +274,45 @@
   <!-- Statusbar -->
   <footer class="sc-statusbar">
     <div class="d-flex align-center">
-      <div class="sc-statusbar-item"><span class="sc-led sc-led-green"></span> MSPC Arbitrage Engine Online</div>
-      <div class="sc-statusbar-item">CEO: Michael G. Scott</div>
+      <div class="sc-statusbar-item">
+        <span class="sc-led sc-led-green"></span><span class="sc-sr-only">Status: Online</span>
+        <span class="sc-status-label">Engine:</span>
+        <span class="sc-status-val">MSPC Arbitrage Online</span>
+      </div>
+      <div class="sc-statusbar-item">
+        <span class="sc-status-label">CEO:</span>
+        <span class="sc-status-val">Michael G. Scott</span>
+      </div>
     </div>
     <div class="d-flex align-center">
-      <div class="sc-statusbar-item">Delivery Vehicle: Korean Church Van</div>
-      <div class="sc-statusbar-item">Pancakes Remaining: 42</div>
+      <div class="sc-statusbar-item">
+        <span class="sc-status-label">Delivery Vehicle:</span>
+        <span class="sc-status-val">Korean Church Van</span>
+      </div>
+      <div class="sc-statusbar-item">
+        <span class="sc-status-label">Pancakes:</span>
+        <span class="sc-status-val">42 Left</span>
+      </div>
     </div>
   </footer>
 
   <script>
-    // Live Ticker Flashing Simulation
-    setInterval(() => {
+    function executeOrder(type) {
+      const qtyEl = document.getElementById('order-qty');
+      const priceEl = document.getElementById('order-price');
+      const qty = (qtyEl && qtyEl.value && parseInt(qtyEl.value, 10) > 0) ? qtyEl.value : '10,000';
+      const price = (priceEl && priceEl.value.trim() !== '') ? priceEl.value : '$2.45';
+
+      if (type === 'BUY') {
+        scrantonToast(`BUY ORDER EXECUTED: ${qty} Reams @ ${price} delivered by Van!`, 'success');
+      } else {
+        scrantonToast(`SHORT SELL EXECUTED: ${qty} Reams of DMN shorted @ ${price}!`, 'danger');
+      }
+    }
+
+    // Bloomberg Terminal Style Cell Flash Simulation with Background Tab Guard
+    let tickerInterval = setInterval(() => {
+      if (document.hidden) return; // Skip DOM updates when tab is hidden
       const bid = document.getElementById('dmn-bid');
       const ask = document.getElementById('dmn-ask');
       if (bid && ask) {
@@ -283,12 +323,17 @@
         bid.textContent = newBid;
         ask.textContent = newAsk;
 
-        const row = bid.closest('tr');
-        if (delta > 0) {
-          row.className = 'sc-tick-up';
-        } else {
-          row.className = 'sc-tick-down';
-        }
+        const flashClass = delta > 0 ? 'sc-flash-up' : 'sc-flash-down';
+        bid.classList.remove('sc-flash-up', 'sc-flash-down');
+        ask.classList.remove('sc-flash-up', 'sc-flash-down');
+
+        bid.classList.add(flashClass);
+        ask.classList.add(flashClass);
+
+        setTimeout(() => {
+          bid.classList.remove('sc-flash-up', 'sc-flash-down');
+          ask.classList.remove('sc-flash-up', 'sc-flash-down');
+        }, 1000);
       }
     }, 2500);
   </script>

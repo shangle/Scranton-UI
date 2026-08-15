@@ -1,21 +1,36 @@
 /**
- * Scranton-UI Custom Web Components v1.0.0
- * Zero-dependency, lightweight Vanilla Web Components for dense desktop apps.
- * Features URL state management (Theme, Tab selection, Modal triggers).
+ * Scranton-UI Custom Web Components v1.3.0
+ * Zero-dependency, lightweight Vanilla Web Components & Diagnostic Controls.
+ * Features URL state management, ARIA accessibility, focus trapping, reactive SVG rendering, popstate sync, and interactive table sorting.
  */
 
 (function() {
   'use strict';
 
-  // Helper to sync URL params
+  // HTML Escaping Utility for XSS Prevention
+  function escapeHTML(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // URL Query Sync Helper (Cleaned of Hash Fragments)
   function setUrlParam(key, val) {
     const url = new URL(window.location.href);
+    const currentVal = url.searchParams.get(key);
     if (val) {
-      url.searchParams.set(key, val);
-    } else {
+      if (currentVal !== val) {
+        url.searchParams.set(key, val);
+        window.history.replaceState({}, '', url.pathname + url.search);
+      }
+    } else if (currentVal !== null) {
       url.searchParams.delete(key);
+      window.history.replaceState({}, '', url.pathname + url.search);
     }
-    window.history.replaceState({}, '', url);
   }
 
   function getUrlParam(key) {
@@ -27,46 +42,89 @@
   // 1. <scranton-theme-switcher>
   // ---------------------------------------------------------------------------
   class ScrantonThemeSwitcher extends HTMLElement {
+    constructor() {
+      super();
+      this._handleClick = this._handleClick.bind(this);
+    }
+
     connectedCallback() {
       const initialTheme = getUrlParam('theme') || localStorage.getItem('scranton-theme') || 'theme-light';
-      this.applyTheme(initialTheme);
+      this.applyTheme(initialTheme, false);
 
       this.innerHTML = `
-        <div class="sc-btn-group">
-          <button type="button" class="sc-btn sc-btn-sm ${initialTheme === 'theme-light' ? 'active' : ''}" data-theme-val="theme-light">Light</button>
-          <button type="button" class="sc-btn sc-btn-sm ${initialTheme === 'theme-dark' ? 'active' : ''}" data-theme-val="theme-dark">Dark</button>
-          <button type="button" class="sc-btn sc-btn-sm ${initialTheme === 'theme-beet' ? 'active' : ''}" data-theme-val="theme-beet" style="color: var(--sc-mustard, #f59e0b);">Beet</button>
+        <div class="sc-btn-group" role="group" aria-label="Theme Selector">
+          <button type="button" class="sc-btn sc-btn-sm ${initialTheme === 'theme-light' ? 'active' : ''}" data-theme-val="theme-light" aria-pressed="${initialTheme === 'theme-light'}">Light</button>
+          <button type="button" class="sc-btn sc-btn-sm ${initialTheme === 'theme-dark' ? 'active' : ''}" data-theme-val="theme-dark" aria-pressed="${initialTheme === 'theme-dark'}">Dark</button>
+          <button type="button" class="sc-btn sc-btn-sm ${initialTheme === 'theme-beet' ? 'active' : ''}" data-theme-val="theme-beet" aria-pressed="${initialTheme === 'theme-beet'}" style="color: var(--sc-mustard, #d97706);">Beet</button>
         </div>
       `;
 
-      this.querySelectorAll('[data-theme-val]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const theme = e.currentTarget.getAttribute('data-theme-val');
-          this.applyTheme(theme);
-          this.querySelectorAll('[data-theme-val]').forEach(b => b.classList.remove('active'));
-          e.currentTarget.classList.add('active');
-        });
-      });
+      this.addEventListener('click', this._handleClick);
     }
 
-    applyTheme(theme) {
+    disconnectedCallback() {
+      this.removeEventListener('click', this._handleClick);
+    }
+
+    _handleClick(e) {
+      const btn = e.target.closest('[data-theme-val]');
+      if (!btn) return;
+      const theme = btn.getAttribute('data-theme-val');
+      this.applyTheme(theme, true);
+      this.querySelectorAll('[data-theme-val]').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+    }
+
+    applyTheme(theme, updateUrl = true) {
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('scranton-theme', theme);
-      setUrlParam('theme', theme);
+      if (updateUrl) setUrlParam('theme', theme);
     }
   }
   customElements.define('scranton-theme-switcher', ScrantonThemeSwitcher);
 
   // ---------------------------------------------------------------------------
-  // 2. <scranton-tabs> and <scranton-tab>
+  // 2. <scranton-tabs> and <scranton-tab> with MutationObserver & Auto-Param
   // ---------------------------------------------------------------------------
   class ScrantonTabs extends HTMLElement {
+    constructor() {
+      super();
+      this._handleKeydown = this._handleKeydown.bind(this);
+    }
+
     connectedCallback() {
+      this.render();
+      this._observer = new MutationObserver((mutations) => {
+        const hasTabChanges = mutations.some(m =>
+          Array.from(m.addedNodes).concat(Array.from(m.removedNodes))
+            .some(node => node.nodeType === 1 && node.tagName.toLowerCase() === 'scranton-tab')
+        );
+        if (hasTabChanges) this.render();
+      });
+      this._observer.observe(this, { childList: true });
+    }
+
+    disconnectedCallback() {
+      if (this._observer) this._observer.disconnect();
+    }
+
+    render() {
       const syncUrl = this.hasAttribute('sync-url');
-      const paramName = this.getAttribute('param-name') || 'tab';
-      const urlTab = syncUrl ? getUrlParam(paramName) : null;
+      let paramName = this.getAttribute('param-name') || 'tab';
       
-      const tabPanels = Array.from(this.querySelectorAll('scranton-tab'));
+      // Auto-scope parameter name if multiple sync-url tabs exist
+      if (syncUrl && !this.hasAttribute('param-name')) {
+        const allSyncTabs = Array.from(document.querySelectorAll('scranton-tabs[sync-url]'));
+        const idx = allSyncTabs.indexOf(this);
+        if (idx > 0) paramName = `tab-${idx + 1}`;
+      }
+
+      const urlTab = syncUrl ? getUrlParam(paramName) : null;
+      const tabPanels = Array.from(this.children).filter(el => el.tagName.toLowerCase() === 'scranton-tab');
       if (tabPanels.length === 0) return;
 
       let activeIndex = 0;
@@ -75,20 +133,28 @@
         if (found !== -1) activeIndex = found;
       }
 
-      // Create Header Navigation
+      const existingNav = this.querySelector(':scope > .sc-nav');
+      if (existingNav) existingNav.remove();
+
       const navEl = document.createElement('ul');
       navEl.className = 'sc-nav';
+      navEl.setAttribute('role', 'tablist');
 
       tabPanels.forEach((panel, idx) => {
         const label = panel.getAttribute('label') || `Tab ${idx + 1}`;
         const tabId = panel.getAttribute('id') || label.toLowerCase().replace(/\s+/g, '-');
         panel.setAttribute('id', tabId);
+        panel.setAttribute('role', 'tabpanel');
+        panel.setAttribute('aria-labelledby', `tab-link-${tabId}`);
 
         const li = document.createElement('li');
         const a = document.createElement('a');
+        a.id = `tab-link-${tabId}`;
         a.className = `sc-nav-link ${idx === activeIndex ? 'active' : ''}`;
-        a.href = `#${tabId}`;
         a.textContent = label;
+        a.setAttribute('role', 'tab');
+        a.setAttribute('aria-selected', idx === activeIndex ? 'true' : 'false');
+        a.setAttribute('tabindex', idx === activeIndex ? '0' : '-1');
 
         a.addEventListener('click', (e) => {
           e.preventDefault();
@@ -99,19 +165,41 @@
         navEl.appendChild(li);
       });
 
+      navEl.addEventListener('keydown', this._handleKeydown);
       this.insertBefore(navEl, this.firstChild);
       this.setActiveTab(activeIndex, false, paramName);
     }
 
+    _handleKeydown(e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      const links = Array.from(this.querySelectorAll(':scope > .sc-nav > li > .sc-nav-link'));
+      const activeIdx = links.findIndex(l => l.classList.contains('active'));
+      if (activeIdx === -1) return;
+
+      let nextIdx = activeIdx;
+      if (e.key === 'ArrowRight') nextIdx = (activeIdx + 1) % links.length;
+      if (e.key === 'ArrowLeft') nextIdx = (activeIdx - 1 + links.length) % links.length;
+
+      links[nextIdx].focus();
+      const syncUrl = this.hasAttribute('sync-url');
+      const paramName = this.getAttribute('param-name') || 'tab';
+      this.setActiveTab(nextIdx, syncUrl, paramName);
+    }
+
     setActiveTab(index, syncUrl, paramName) {
-      const tabLinks = this.querySelectorAll('.sc-nav-link');
-      const tabPanels = this.querySelectorAll('scranton-tab');
+      const tabLinks = this.querySelectorAll(':scope > .sc-nav > li > .sc-nav-link');
+      const tabPanels = Array.from(this.children).filter(el => el.tagName.toLowerCase() === 'scranton-tab');
 
       tabLinks.forEach((link, idx) => {
         if (idx === index) {
           link.classList.add('active');
+          link.setAttribute('aria-selected', 'true');
+          link.setAttribute('tabindex', '0');
         } else {
           link.classList.remove('active');
+          link.setAttribute('aria-selected', 'false');
+          link.setAttribute('tabindex', '-1');
         }
       });
 
@@ -132,61 +220,147 @@
 
   class ScrantonTab extends HTMLElement {
     connectedCallback() {
-      // Container handled by parent <scranton-tabs>
+      // Managed by parent <scranton-tabs>
     }
   }
   customElements.define('scranton-tab', ScrantonTab);
 
   // ---------------------------------------------------------------------------
-  // 3. <scranton-modal>
+  // 3. <scranton-modal> with Focus Trapping & Accessibility
   // ---------------------------------------------------------------------------
   class ScrantonModal extends HTMLElement {
+    constructor() {
+      super();
+      this._previousActiveElement = null;
+      this._handleClose = this.close.bind(this);
+      this._handleBackdropClick = (e) => {
+        if (e.target === this.backdrop) this.close();
+      };
+      this._handleKeydown = (e) => {
+        if (!this.backdrop || this.backdrop.style.display !== 'flex') return;
+
+        if (e.key === 'Escape') {
+          this.close();
+          return;
+        }
+
+        if (e.key === 'Tab') {
+          const focusables = Array.from(this.backdrop.querySelectorAll('button, input, select, textarea, [tabindex="0"]'));
+          if (focusables.length === 0) return;
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      };
+    }
+
+    static get observedAttributes() {
+      return ['title'];
+    }
+
+    attributeChangedCallback() {
+      if (this.titleEl) {
+        this.titleEl.textContent = this.getAttribute('title') || 'System Window';
+      }
+    }
+
     connectedCallback() {
+      if (this.querySelector('.sc-modal-backdrop')) return;
+
       const title = this.getAttribute('title') || 'System Window';
       const modalId = this.getAttribute('id');
 
-      const content = this.innerHTML;
-      this.innerHTML = `
-        <div class="sc-modal-backdrop" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
-          <div class="sc-window" style="width: 500px; max-width:90vw;">
-            <div class="sc-window-titlebar">
-              <span>${title}</span>
-              <div class="sc-window-controls">
-                <button type="button" class="sc-window-btn btn-close">✕</button>
-              </div>
-            </div>
-            <div class="sc-pane-body" style="background: var(--sc-bg-panel); padding:12px;">
-              ${content}
-            </div>
-          </div>
-        </div>
-      `;
+      const fragment = document.createDocumentFragment();
+      while (this.firstChild) {
+        fragment.appendChild(this.firstChild);
+      }
 
-      this.backdrop = this.querySelector('.sc-modal-backdrop');
-      this.querySelector('.btn-close').addEventListener('click', () => this.close());
-      this.backdrop.addEventListener('click', (e) => {
-        if (e.target === this.backdrop) this.close();
-      });
+      this.backdrop = document.createElement('div');
+      this.backdrop.className = 'sc-modal-backdrop';
+      this.backdrop.style.cssText = 'display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; align-items:center; justify-content:center;';
+      this.backdrop.setAttribute('role', 'dialog');
+      this.backdrop.setAttribute('aria-modal', 'true');
+      this.backdrop.setAttribute('aria-label', title);
+
+      const win = document.createElement('div');
+      win.className = 'sc-window';
+      win.setAttribute('tabindex', '-1');
+      win.style.cssText = 'width: 520px; max-width:92vw; border: 1px solid var(--sc-border-dark);';
+
+      const titlebar = document.createElement('div');
+      titlebar.className = 'sc-window-titlebar';
+      this.titleEl = document.createElement('span');
+      this.titleEl.textContent = title;
+
+      const controls = document.createElement('div');
+      controls.className = 'sc-window-controls';
+      const closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'sc-window-btn btn-close';
+      closeBtn.setAttribute('aria-label', 'Close Window');
+      closeBtn.textContent = '✕';
+
+      controls.appendChild(closeBtn);
+      titlebar.appendChild(this.titleEl);
+      titlebar.appendChild(controls);
+
+      const body = document.createElement('div');
+      body.className = 'sc-pane-body';
+      body.style.cssText = 'background: var(--sc-bg-panel); padding:12px;';
+      body.appendChild(fragment);
+
+      win.appendChild(titlebar);
+      win.appendChild(body);
+      this.backdrop.appendChild(win);
+      this.appendChild(this.backdrop);
+
+      closeBtn.addEventListener('click', this._handleClose);
+      this.backdrop.addEventListener('click', this._handleBackdropClick);
+      document.addEventListener('keydown', this._handleKeydown);
 
       if (modalId && getUrlParam('modal') === modalId) {
         this.open();
       }
     }
 
+    disconnectedCallback() {
+      document.removeEventListener('keydown', this._handleKeydown);
+    }
+
     open() {
       if (this.backdrop) {
+        this._previousActiveElement = document.activeElement;
         this.backdrop.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
         const modalId = this.getAttribute('id');
         if (modalId) setUrlParam('modal', modalId);
+
+        const focusable = this.backdrop.querySelector('button, input, select, textarea, [tabindex="0"]');
+        if (focusable) {
+          focusable.focus();
+        } else if (this.backdrop.querySelector('.sc-window')) {
+          this.backdrop.querySelector('.sc-window').focus();
+        }
       }
     }
 
     close() {
       if (this.backdrop) {
         this.backdrop.style.display = 'none';
+        document.body.style.overflow = '';
         const modalId = this.getAttribute('id');
         if (modalId && getUrlParam('modal') === modalId) {
           setUrlParam('modal', null);
+        }
+        if (this._previousActiveElement && typeof this._previousActiveElement.focus === 'function') {
+          this._previousActiveElement.focus();
         }
       }
     }
@@ -194,29 +368,75 @@
   customElements.define('scranton-modal', ScrantonModal);
 
   // ---------------------------------------------------------------------------
-  // 4. <scranton-sparkline>
+  // 4. <scranton-sparkline> with Fluid Responsive Scaling & Fixed Gradient IDs
   // ---------------------------------------------------------------------------
   class ScrantonSparkline extends HTMLElement {
+    static get observedAttributes() {
+      return ['values', 'width', 'height', 'color', 'fluid'];
+    }
+
+    attributeChangedCallback() {
+      this.render();
+    }
+
     connectedCallback() {
+      this.render();
+    }
+
+    render() {
       const valuesStr = this.getAttribute('values') || '10,25,18,30,45,35,60,50,75,90';
-      const values = valuesStr.split(',').map(Number);
+      const values = valuesStr
+        .split(',')
+        .map(v => parseFloat(v.trim()))
+        .filter(v => !isNaN(v));
+
       const width = parseInt(this.getAttribute('width') || '100', 10);
       const height = parseInt(this.getAttribute('height') || '24', 10);
-      const color = this.getAttribute('color') || 'var(--sc-accent, #0284c7)';
+      const color = escapeHTML(this.getAttribute('color') || 'var(--sc-accent, #0284c7)');
+      const isFluid = this.hasAttribute('fluid');
+
+      const svgWidth = isFluid ? '100%' : width;
+      const svgHeight = isFluid ? '100%' : height;
+
+      if (values.length === 0) {
+        this.innerHTML = `<svg width="${svgWidth}" height="${svgHeight}"></svg>`;
+        return;
+      }
 
       const min = Math.min(...values);
       const max = Math.max(...values);
-      const range = max - min || 1;
+      const range = max - min;
 
-      const points = values.map((val, idx) => {
-        const x = (idx / (values.length - 1)) * width;
-        const y = height - ((val - min) / range) * (height - 4) - 2;
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      }).join(' ');
+      let points = '';
+      if (values.length <= 1 || range === 0) {
+        points = `0,${(height/2).toFixed(1)} ${width},${(height/2).toFixed(1)}`;
+      } else {
+        points = values.map((val, idx) => {
+          const x = (idx / (values.length - 1)) * width;
+          const y = height - ((val - min) / range) * (height - 4) - 2;
+          return `${x.toFixed(1)},${y.toFixed(1)}`;
+        }).join(' ');
+      }
+
+      const areaPoints = `0,${height} ${points} ${width},${height}`;
+      const lastPoint = points.split(' ').pop().split(',');
+
+      if (!this._instanceGradId) {
+        this._instanceGradId = `spark-grad-${Math.random().toString(36).substring(2, 8)}`;
+      }
+      const gradId = this._instanceGradId;
 
       this.innerHTML = `
-        <svg width="${width}" height="${height}" style="display:inline-block; vertical-align:middle;">
-          <polyline fill="none" stroke="${color}" stroke-width="1.5" points="${points}" />
+        <svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" style="display:inline-block; vertical-align:middle; overflow:visible;">
+          <defs>
+            <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="${color}" stop-opacity="0.35" />
+              <stop offset="100%" stop-color="${color}" stop-opacity="0.0" />
+            </linearGradient>
+          </defs>
+          <polygon class="spark-poly" fill="url(#${gradId})" points="${areaPoints}" />
+          <polyline class="spark-line" fill="none" stroke="${color}" stroke-width="1.6" points="${points}" stroke-linecap="square" />
+          <circle class="spark-dot" cx="${lastPoint[0]}" cy="${lastPoint[1]}" r="2" fill="${color}" />
         </svg>
       `;
     }
@@ -227,13 +447,25 @@
   // 5. <scranton-metric-card>
   // ---------------------------------------------------------------------------
   class ScrantonMetricCard extends HTMLElement {
+    static get observedAttributes() {
+      return ['title', 'value', 'change', 'up', 'down', 'sparkline'];
+    }
+
+    attributeChangedCallback() {
+      this.render();
+    }
+
     connectedCallback() {
-      const title = this.getAttribute('title') || 'Metric';
-      const value = this.getAttribute('value') || '0';
-      const change = this.getAttribute('change') || '';
+      this.render();
+    }
+
+    render() {
+      const title = escapeHTML(this.getAttribute('title') || 'Metric');
+      const value = escapeHTML(this.getAttribute('value') || '0');
+      const change = escapeHTML(this.getAttribute('change') || '');
       const isUp = this.hasAttribute('up');
       const isDown = this.hasAttribute('down');
-      const sparklineVals = this.getAttribute('sparkline') || '';
+      const sparklineVals = escapeHTML(this.getAttribute('sparkline') || '');
 
       let badgeClass = 'sc-badge';
       if (isUp) badgeClass += ' sc-badge-success';
@@ -241,13 +473,13 @@
 
       this.innerHTML = `
         <div class="sc-card" style="margin-bottom:0; height:100%;">
-          <div class="sc-card-header" style="font-size:10px;">
-            <span>${title}</span>
+          <div class="sc-card-header">
+            <span title="${title}">${title}</span>
             ${change ? `<span class="${badgeClass}">${change}</span>` : ''}
           </div>
           <div class="sc-card-body d-flex align-center justify-between" style="padding:6px 8px;">
-            <div style="font-size:18px; font-weight:800; font-family:var(--sc-font-mono);">${value}</div>
-            ${sparklineVals ? `<scranton-sparkline values="${sparklineVals}" width="64" height="20"></scranton-sparkline>` : ''}
+            <div class="sc-metric-value" style="font-size:18px; font-weight:800; font-family:var(--sc-font-mono); white-space:nowrap; flex-shrink:1; min-width:0;">${value}</div>
+            ${sparklineVals ? `<scranton-sparkline values="${sparklineVals}" width="64" height="20" style="flex-shrink:0; margin-left:6px;"></scranton-sparkline>` : ''}
           </div>
         </div>
       `;
@@ -256,31 +488,228 @@
   customElements.define('scranton-metric-card', ScrantonMetricCard);
 
   // ---------------------------------------------------------------------------
-  // 6. Global Toast Notifications Helper
+  // 6. Global Toast Notification Helper (Max Queue Cap 4 & Timer Pause)
   // ---------------------------------------------------------------------------
   window.scrantonToast = function(msg, type = 'info') {
     let container = document.getElementById('sc-toast-container');
     if (!container) {
       container = document.createElement('div');
       container.id = 'sc-toast-container';
+      container.setAttribute('role', 'region');
+      container.setAttribute('aria-live', 'polite');
       container.style.cssText = 'position:fixed; bottom:28px; right:12px; z-index:99999; display:flex; flex-direction:column; gap:4px; max-width:320px;';
       document.body.appendChild(container);
     }
 
+    // Queue cap: max 4 active toasts
+    const existing = container.querySelectorAll('.sc-alert');
+    if (existing.length >= 4) {
+      existing[0].remove();
+    }
+
+    const icons = { info: 'ⓘ', success: '✓', warning: '⚠', danger: '⛔' };
+    const safeType = escapeHTML(type);
+
     const toast = document.createElement('div');
-    toast.className = `sc-alert sc-alert-${type}`;
-    toast.style.cssText = 'margin:0; box-shadow: var(--sc-shadow-md); animation: fadeIn 0.2s;';
+    toast.className = `sc-alert sc-alert-${safeType}`;
+    toast.style.cssText = 'margin:0; position:relative; box-shadow: var(--sc-shadow-md); animation: fadeIn 0.2s; overflow:hidden;';
     toast.innerHTML = `
-      <span>${msg}</span>
-      <button type="button" style="background:none; border:none; color:inherit; font-weight:bold; cursor:pointer; margin-left:8px;">✕</button>
+      <div class="d-flex align-center gap-2">
+        <span style="font-size:12px; font-weight:bold;">${icons[safeType] || 'ⓘ'}</span>
+        <span>${escapeHTML(msg)}</span>
+      </div>
+      <button type="button" aria-label="Close Toast" style="background:none; border:none; color:inherit; font-weight:bold; cursor:pointer; margin-left:8px;">✕</button>
+      <div class="sc-toast-progress" style="position:absolute; bottom:0; left:0; height:2px; background:currentColor; opacity:0.6; width:100%; transition: width 4s linear;"></div>
     `;
 
-    toast.querySelector('button').addEventListener('click', () => toast.remove());
-    container.appendChild(toast);
+    const prog = toast.querySelector('.sc-toast-progress');
+    setTimeout(() => { if (prog) prog.style.width = '0%'; }, 50);
 
-    setTimeout(() => {
-      if (toast.parentNode) toast.remove();
-    }, 4000);
+    let autoRemoveTimer = null;
+
+    const startTimer = () => {
+      autoRemoveTimer = setTimeout(() => {
+        if (toast.parentNode) toast.remove();
+      }, 4000);
+    };
+
+    const dismiss = () => {
+      if (autoRemoveTimer) clearTimeout(autoRemoveTimer);
+      toast.remove();
+    };
+
+    toast.querySelector('button').addEventListener('click', dismiss);
+    toast.addEventListener('mouseenter', () => {
+      if (autoRemoveTimer) clearTimeout(autoRemoveTimer);
+      if (prog) prog.style.transition = 'none';
+    });
+    toast.addEventListener('mouseleave', () => {
+      startTimer();
+      if (prog) {
+        prog.style.transition = 'width 4s linear';
+        prog.style.width = '0%';
+      }
+    });
+
+    container.appendChild(toast);
+    startTimer();
   };
+
+  // ---------------------------------------------------------------------------
+  // 7. Interactive Table Column Sorting Engine
+  // ---------------------------------------------------------------------------
+  function initTableSorting() {
+    document.querySelectorAll('table.sc-table').forEach(table => {
+      const headers = table.querySelectorAll('th');
+      headers.forEach((th, colIdx) => {
+        if (th.classList.contains('sortable') || th.querySelector('.sc-sort-indicator')) {
+          th.classList.add('sortable');
+          th.setAttribute('tabindex', '0');
+          th.setAttribute('role', 'columnheader');
+          if (!th.hasAttribute('aria-sort')) th.setAttribute('aria-sort', 'none');
+
+          const sortHandler = () => {
+            const tbody = table.querySelector('tbody');
+            if (!tbody) return;
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const currentSort = th.getAttribute('aria-sort');
+            const isAsc = currentSort !== 'ascending';
+
+            headers.forEach(h => {
+              if (h !== th && h.classList.contains('sortable')) {
+                h.setAttribute('aria-sort', 'none');
+                const ind = h.querySelector('.sc-sort-indicator');
+                if (ind) ind.textContent = '▲';
+              }
+            });
+
+            th.setAttribute('aria-sort', isAsc ? 'ascending' : 'descending');
+            const indicator = th.querySelector('.sc-sort-indicator');
+            if (indicator) indicator.textContent = isAsc ? '▲' : '▼';
+
+            rows.sort((rowA, rowB) => {
+              const cellA = rowA.children[colIdx] ? rowA.children[colIdx].textContent.trim() : '';
+              const cellB = rowB.children[colIdx] ? rowB.children[colIdx].textContent.trim() : '';
+
+              const numA = parseFloat(cellA.replace(/[^0-9.-]+/g, ''));
+              const numB = parseFloat(cellB.replace(/[^0-9.-]+/g, ''));
+
+              if (!isNaN(numA) && !isNaN(numB) && cellA.match(/^[$\d.,%-]+$/)) {
+                return isAsc ? numA - numB : numB - numA;
+              }
+              return isAsc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+            });
+
+            rows.forEach(r => tbody.appendChild(r));
+          };
+
+          th.addEventListener('click', sortHandler);
+          th.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              sortHandler();
+            }
+          });
+        }
+      });
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // 8. Global Browser History Sync & Keyboard Tree View Handlers
+  // ---------------------------------------------------------------------------
+  window.addEventListener('popstate', () => {
+    document.querySelectorAll('scranton-tabs[sync-url]').forEach(tabs => tabs.render());
+    document.querySelectorAll('scranton-modal').forEach(modal => {
+      const modalId = modal.getAttribute('id');
+      if (modalId && getUrlParam('modal') === modalId) {
+        modal.open();
+      } else {
+        modal.close();
+      }
+    });
+  });
+
+  function initGlobalHandlers() {
+    initTableSorting();
+
+    // Data Table Row Selection (Guarded against interactive & custom elements)
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a, button, input, select, label, textarea, scranton-sparkline, scranton-metric-card, [data-no-select]')) return;
+      const row = e.target.closest('.sc-table-hover tbody tr');
+      if (row) {
+        const table = row.closest('table');
+        if (table) {
+          table.querySelectorAll('tr').forEach(r => r.classList.remove('selected'));
+          row.classList.add('selected');
+        }
+      }
+    });
+
+    // Sidebar Tree View Toggle (Accessibility & Keyboard Operability)
+    document.querySelectorAll('.sc-tree-node').forEach(node => {
+      node.setAttribute('tabindex', '0');
+      node.setAttribute('role', 'treeitem');
+      const parentLi = node.closest('li');
+      if (parentLi) {
+        const subUl = parentLi.querySelector(':scope > ul');
+        if (subUl) node.setAttribute('aria-expanded', subUl.style.display !== 'none' ? 'true' : 'false');
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      const treeNode = e.target.closest('.sc-tree-node');
+      if (treeNode) {
+        const parentLi = treeNode.closest('li');
+        if (parentLi) {
+          const subUl = parentLi.querySelector(':scope > ul');
+          if (subUl) {
+            const isHidden = subUl.style.display === 'none';
+            subUl.style.display = isHidden ? 'block' : 'none';
+            treeNode.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+          }
+          const container = treeNode.closest('.sc-tree') || treeNode.closest('.sc-sidebar');
+          if (container) {
+            container.querySelectorAll('.sc-tree-node').forEach(n => n.classList.remove('active'));
+            treeNode.classList.add('active');
+          }
+        }
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        const treeNode = e.target.closest('.sc-tree-node');
+        if (treeNode) {
+          e.preventDefault();
+          treeNode.click();
+        }
+      }
+    });
+
+    // Split Pane Body Collapse Toggle (Guarded against form submission)
+    document.addEventListener('click', (e) => {
+      const toggleBtn = e.target.closest('.sc-pane-toggle');
+      if (toggleBtn) {
+        if (!toggleBtn.hasAttribute('type')) toggleBtn.setAttribute('type', 'button');
+        const pane = toggleBtn.closest('.sc-pane, .sc-card');
+        if (pane) {
+          const body = pane.querySelector('.sc-pane-body, .sc-pane-body-nopad, .sc-card-body');
+          if (body) {
+            const isHidden = body.style.display === 'none';
+            body.style.display = isHidden ? 'block' : 'none';
+            toggleBtn.textContent = isHidden ? '▼' : '▲';
+            toggleBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+          }
+        }
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGlobalHandlers);
+  } else {
+    initGlobalHandlers();
+  }
 
 })();

@@ -17,11 +17,11 @@
     </div>
     
     <div class="d-flex align-center gap-3">
-      <nav class="d-flex gap-2">
-        <a href="index.html" class="sc-btn sc-btn-sm">← Docs Hub</a>
+      <nav class="d-flex gap-2" aria-label="Main Application Navigation">
+        <a href="index.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Return to Documentation">← Docs Hub</a>
         <a href="dashboard.html" class="sc-btn sc-btn-sm">1. Enterprise Sales</a>
         <a href="tools.html" class="sc-btn sc-btn-sm">2. Dwight Tools</a>
-        <a href="control-panel.html" class="sc-btn sc-btn-sm sc-btn-secondary">3. Toby HR</a>
+        <a href="control-panel.html" class="sc-btn sc-btn-sm sc-btn-secondary" aria-current="page">3. Toby HR</a>
         <a href="terminal.html" class="sc-btn sc-btn-sm">4. Trading Terminal</a>
         <a href="workflow.html" class="sc-btn sc-btn-sm">5. Command Tree</a>
       </nav>
@@ -35,7 +35,7 @@
     <!-- Left Category Navigation Sidebar -->
     <aside class="sc-sidebar p-2" style="width:240px;">
       <div class="sc-label mb-1">HR Categories</div>
-      <ul class="sc-tree mb-3">
+      <ul class="sc-tree mb-3" role="tree">
         <li>
           <span class="sc-tree-node active">
             📁 Active Prank Logs (Jim vs Dwight)
@@ -64,7 +64,7 @@
       </ul>
 
       <div class="sc-label mb-1">HR System Settings</div>
-      <ul class="sc-tree mb-3">
+      <ul class="sc-tree mb-3" role="tree">
         <li><span class="sc-tree-node">⚙️ Anonymity Protocols</span></li>
         <li><span class="sc-tree-node">⚙️ Corporate Filing Automation</span></li>
         <li><span class="sc-tree-node">⚙️ Toby Deprecation Filter</span></li>
@@ -81,27 +81,37 @@
     <!-- Main Content Area: Form & Log Settings -->
     <main class="sc-main p-3">
       
+      <!-- Wayfinding Breadcrumbs -->
+      <ul class="sc-breadcrumbs mb-2" aria-label="Breadcrumbs">
+        <li><a href="index.html">Dunder Mifflin Core</a></li>
+        <li><a href="control-panel.html">Corporate HR</a></li>
+        <li>Toby Flenderson Complaint Registry</li>
+      </ul>
+
       <!-- Top Alert -->
       <div class="sc-alert sc-alert-warning mb-3">
         <div>
           <strong>CONFIDENTIAL HR PORTAL:</strong> Logged in as <em>Toby Flenderson (HR Representative)</em>. All submissions are forwarded directly to Corporate in New York.
         </div>
-        <button class="sc-btn sc-btn-sm sc-btn-secondary" onclick="scrantonToast('Complaint Log Exported to PDF', 'info')">Export PDF Report</button>
+        <button type="button" class="sc-btn sc-btn-sm sc-btn-secondary" onclick="scrantonToast('Complaint Log Exported to PDF', 'info')">Export PDF Report</button>
       </div>
 
       <!-- Main Form Card -->
-      <div class="sc-card mb-3">
+      <form id="hr-form" class="sc-card mb-3" onsubmit="handleComplaintSubmit(event)">
         <div class="sc-card-header">
           <span>File New Employee Incident Complaint</span>
-          <span class="sc-badge sc-badge-danger">HIGH PRIORITY</span>
+          <div class="sc-card-header-actions">
+            <span class="sc-badge sc-badge-danger">HIGH PRIORITY</span>
+            <button type="button" class="sc-pane-toggle" aria-label="Toggle Form" aria-expanded="true">▼</button>
+          </div>
         </div>
         <div class="sc-card-body">
           
           <div class="sc-row">
-            <div class="sc-col-6">
+            <div class="sc-col-6 sc-col-md-12">
               <div class="sc-form-group">
-                <label class="sc-label">Complainant (Victim)</label>
-                <select class="sc-select">
+                <label for="complainant-select" class="sc-label">Complainant (Victim) <span class="sc-required">*</span></label>
+                <select id="complainant-select" class="sc-select" aria-required="true">
                   <option selected>Dwight K. Schrute</option>
                   <option>Jim Halpert</option>
                   <option>Pam Beesly</option>
@@ -109,27 +119,29 @@
                   <option>Kevin Malone</option>
                   <option>Andy Bernard</option>
                 </select>
+                <span class="sc-field-hint">Select the aggrieved Dunder Mifflin staff member.</span>
               </div>
             </div>
 
-            <div class="sc-col-6">
+            <div class="sc-col-6 sc-col-md-12">
               <div class="sc-form-group">
-                <label class="sc-label">Offender (Accused Party)</label>
-                <select class="sc-select">
+                <label for="offender-select" class="sc-label">Offender (Accused Party) <span class="sc-required">*</span></label>
+                <select id="offender-select" class="sc-select" aria-required="true">
                   <option selected>Jim Halpert (Prankster)</option>
                   <option>Michael G. Scott (Regional Manager)</option>
                   <option>Creed Bratton (Unknown)</option>
                   <option>Ryan Howard (Temp)</option>
                 </select>
+                <span class="sc-field-hint">Select the accused party.</span>
               </div>
             </div>
           </div>
 
           <div class="sc-row">
-            <div class="sc-col-4">
+            <div class="sc-col-4 sc-col-md-12">
               <div class="sc-form-group">
-                <label class="sc-label">Violation Category</label>
-                <select class="sc-select">
+                <label for="violation-cat" class="sc-label">Violation Category</label>
+                <select id="violation-cat" class="sc-select">
                   <option>Personal Property Encapsulation (Jell-O)</option>
                   <option>Desk Displacement (Moved into Bathroom)</option>
                   <option>Inappropriate Nickname Usage</option>
@@ -138,10 +150,10 @@
               </div>
             </div>
 
-            <div class="sc-col-4">
+            <div class="sc-col-4 sc-col-md-12">
               <div class="sc-form-group">
-                <label class="sc-label">Severity Level</label>
-                <select class="sc-select">
+                <label for="severity-lvl" class="sc-label">Severity Level</label>
+                <select id="severity-lvl" class="sc-select">
                   <option>Level 1 — Mild Annoyance</option>
                   <option selected>Level 3 — Severe Workplace Prank</option>
                   <option>Level 5 — Threat Level Midnight Emergency</option>
@@ -149,7 +161,7 @@
               </div>
             </div>
 
-            <div class="sc-col-4">
+            <div class="sc-col-4 sc-col-md-12">
               <div class="sc-form-group">
                 <label class="sc-label">Escalation Status</label>
                 <div class="pt-1">
@@ -162,11 +174,12 @@
           </div>
 
           <div class="sc-form-group">
-            <label class="sc-label">Detailed Incident Narrative</label>
-            <textarea class="sc-textarea" style="min-height:80px;">"Today Jim wrapped my entire desk, keyboard, mouse, and desk chair in aluminum foil. When I sat down, the chair collapsed into a crumpled ball. Jim claims it was a gift from Santa."</textarea>
+            <label for="incident-text" class="sc-label">Detailed Incident Narrative <span class="sc-required">*</span></label>
+            <textarea id="incident-text" class="sc-textarea" style="min-height:80px;" aria-required="true">"Today Jim wrapped my entire desk, keyboard, mouse, and desk chair in aluminum foil. When I sat down, the chair collapsed into a crumpled ball. Jim claims it was a gift from Santa."</textarea>
+            <span class="sc-field-hint">Provide detailed evidence for Corporate filing.</span>
           </div>
 
-          <div class="d-flex justify-between align-center mt-2">
+          <div class="d-flex justify-between align-center mt-2 flex-wrap gap-2">
             <div class="d-flex align-center gap-3">
               <label class="sc-switch">
                 <input type="checkbox" checked>
@@ -175,30 +188,33 @@
               </label>
             </div>
             <div class="d-flex gap-2">
-              <button class="sc-btn" onclick="scrantonToast('Form Reset', 'info')">Discard Draft</button>
-              <button class="sc-btn sc-btn-primary" onclick="scrantonToast('HR Incident Logged! Corporate Notified.', 'success')">Submit Complaint to Corporate</button>
+              <button type="button" class="sc-btn" onclick="resetHRForm()">Discard Draft</button>
+              <button type="submit" class="sc-btn sc-btn-primary">Submit Complaint to Corporate</button>
             </div>
           </div>
 
         </div>
-      </div>
+      </form>
 
       <!-- Recent Complaint Ledger Table -->
       <div class="sc-pane">
         <div class="sc-pane-header">
           <span>Historical Complaint Archive (Scranton Branch)</span>
-          <span class="sc-badge sc-badge-primary">Showing Last 5 Logs</span>
+          <div class="sc-card-header-actions">
+            <span class="sc-badge sc-badge-primary">Showing Last 5 Logs</span>
+            <button type="button" class="sc-pane-toggle" aria-label="Toggle Pane" aria-expanded="true">▼</button>
+          </div>
         </div>
         <div class="sc-pane-body-nopad">
-          <table class="sc-table sc-table-striped sc-table-hover">
+          <table id="complaint-table" class="sc-table sc-table-striped sc-table-hover">
             <thead>
               <tr>
-                <th>Ticket ID</th>
-                <th>Complainant</th>
-                <th>Offender</th>
+                <th class="sortable">Ticket ID <span class="sc-sort-indicator">▲</span></th>
+                <th class="sortable">Complainant</th>
+                <th class="sortable">Offender</th>
                 <th>Violation Summary</th>
-                <th>Date Logged</th>
-                <th>Status</th>
+                <th class="sortable">Date Logged</th>
+                <th class="sortable">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -246,14 +262,79 @@
   <!-- Statusbar -->
   <footer class="sc-statusbar">
     <div class="d-flex align-center">
-      <div class="sc-statusbar-item"><span class="sc-led sc-led-yellow"></span> HR Officer: Toby Flenderson</div>
-      <div class="sc-statusbar-item">Corporate Connection: New York Office</div>
+      <div class="sc-statusbar-item">
+        <span class="sc-led sc-led-yellow"></span><span class="sc-sr-only">Status: Pending</span>
+        <span class="sc-status-label">HR Officer:</span>
+        <span class="sc-status-val">Toby Flenderson</span>
+      </div>
+      <div class="sc-statusbar-item">
+        <span class="sc-status-label">Corporate Link:</span>
+        <span class="sc-status-val">New York Office</span>
+      </div>
     </div>
     <div class="d-flex align-center">
-      <div class="sc-statusbar-item">Total Complaints Filed: 4,891</div>
-      <div class="sc-statusbar-item">Michael Scott Sigh Count: ∞</div>
+      <div class="sc-statusbar-item">
+        <span class="sc-status-label">Complaints Filed:</span>
+        <span class="sc-status-val">4,891</span>
+      </div>
+      <div class="sc-statusbar-item">
+        <span class="sc-status-label">Michael Scott Sighs:</span>
+        <span class="sc-status-val">∞</span>
+      </div>
     </div>
   </footer>
+
+  <script>
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function resetHRForm() {
+      const form = document.getElementById('hr-form');
+      if (form) {
+        form.reset();
+        form.dispatchEvent(new Event('input', { bubbles: true }));
+        form.dispatchEvent(new Event('change', { bubbles: true }));
+        scrantonToast('Draft Complaint Cleared', 'info');
+      }
+    }
+
+    function handleComplaintSubmit(e) {
+      e.preventDefault();
+      const comp = escapeHTML(document.getElementById('complainant-select').value);
+      const off = escapeHTML(document.getElementById('offender-select').value);
+      const rawDesc = document.getElementById('incident-text').value;
+      const desc = escapeHTML(rawDesc);
+
+      scrantonToast(`HR Complaint Logged: ${comp} vs ${off}! Filed with New York.`, 'success');
+
+      const tbody = document.querySelector('#complaint-table tbody');
+      if (tbody) {
+        const tr = document.createElement('tr');
+        const nextId = 'HR-' + Math.floor(8802 + Math.random() * 100);
+        const today = new Date().toISOString().split('T')[0];
+        const displayDesc = desc.length > 35 ? desc.substring(0, 35) + '...' : desc;
+
+        tr.innerHTML = `
+          <td class="font-mono">${nextId}</td>
+          <td>${comp}</td>
+          <td>${off}</td>
+          <td>${displayDesc}</td>
+          <td>${today}</td>
+          <td><span class="sc-badge sc-badge-warning">FILED TO NY</span></td>
+        `;
+        tbody.insertBefore(tr, tbody.firstChild);
+      }
+
+      resetHRForm();
+    }
+  </script>
 
 </body>
 </html>
