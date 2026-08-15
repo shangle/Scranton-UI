@@ -19,11 +19,11 @@
     <div class="d-flex align-center gap-3">
       <nav class="d-flex gap-2" aria-label="Main Application Navigation">
         <a href="index.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Documentation Hub">← Docs Hub</a>
-        <a href="dashboard.html" class="sc-btn sc-btn-sm sc-btn-primary" aria-current="page" data-sc-tooltip-pos="bottom" data-sc-tooltip="Sales Ledger">1. Enterprise Sales</a>
-        <a href="tools.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Dwight Security Tools">2. Dwight Tools</a>
-        <a href="control-panel.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Toby HR System">3. Toby HR</a>
-        <a href="terminal.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Live Market Watch">4. Trading Terminal</a>
-        <a href="workflow.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Chain of Command">5. Command Tree</a>
+        <a href="dashboard.html" class="sc-btn sc-btn-sm sc-btn-primary" aria-current="page" data-sc-tooltip-pos="bottom" data-sc-tooltip="Sales Ledger">1. <span class="sc-btn-label">Enterprise Sales</span></a>
+        <a href="tools.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Dwight Security Tools">2. <span class="sc-btn-label">Dwight Tools</span></a>
+        <a href="control-panel.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Toby HR System">3. <span class="sc-btn-label">Toby HR</span></a>
+        <a href="terminal.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Live Market Watch">4. <span class="sc-btn-label">Trading Terminal</span></a>
+        <a href="workflow.html" class="sc-btn sc-btn-sm" data-sc-tooltip-pos="bottom" data-sc-tooltip="Chain of Command">5. <span class="sc-btn-label">Command Tree</span></a>
       </nav>
       <scranton-theme-switcher></scranton-theme-switcher>
     </div>
@@ -48,7 +48,7 @@
         <scranton-metric-card title="Gross Sales Revenue" value="$482,910" change="+$42.1k" up sparkline="45,50,48,65,70,82,91" data-sc-tooltip="Gross Scranton branch Q3 revenue"></scranton-metric-card>
       </div>
       <div class="sc-col-3 sc-col-md-6 mb-2">
-        <scranton-metric-card title="Golden Ticket Rebates" value="$14,250" change="AUDIT WARN" down sparkline="80,75,40,20,15,30,12" data-sc-tooltip="Michael Scott Golden Ticket discount total"></scranton-metric-card>
+        <scranton-metric-card title="Golden Ticket Rebates" value="($14,250)" change="AUDIT WARN" down sparkline="80,75,40,20,15,30,12" data-sc-tooltip="Michael Scott Golden Ticket discount total"></scranton-metric-card>
       </div>
       <div class="sc-col-3 sc-col-md-6 mb-2">
         <scranton-metric-card title="Stapler Jell-O Encapsulations" value="18 Incidents" change="HIGH" down sparkline="2,4,3,8,12,15,18" data-sc-tooltip="Jim Halpert desk prank tally"></scranton-metric-card>
@@ -66,7 +66,7 @@
             <div class="sc-card-header-actions">
               <button type="button" class="sc-btn sc-btn-sm" onclick="scrantonToast('Filtered by Scranton Branch', 'info')">Scranton Only</button>
               <button type="button" class="sc-btn sc-btn-sm sc-btn-beet" onclick="scrantonToast('Dwight Schrute is Top Salesman!', 'success')">Schrute View</button>
-              <button type="button" class="sc-pane-toggle" aria-label="Toggle Pane" aria-expanded="true">▼</button>
+              <button type="button" class="sc-pane-toggle" aria-label="Toggle Pane" aria-expanded="true"><span class="sc-pane-chevron"></span></button>
             </div>
           </div>
           <div class="sc-pane-body-nopad">
@@ -150,7 +150,7 @@
             <span>Warehouse Inventory & Quota Meters</span>
             <div class="sc-card-header-actions">
               <span class="sc-badge sc-badge-warning">Capacity: 92%</span>
-              <button type="button" class="sc-pane-toggle" aria-label="Toggle Pane" aria-expanded="true">▼</button>
+              <button type="button" class="sc-pane-toggle" aria-label="Toggle Pane" aria-expanded="true"><span class="sc-pane-chevron"></span></button>
             </div>
           </div>
           <div class="sc-pane-body">

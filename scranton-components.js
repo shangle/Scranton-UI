@@ -1,7 +1,7 @@
 /**
- * Scranton-UI Custom Web Components v1.3.0
+ * Scranton-UI Custom Web Components v1.4.0
  * Zero-dependency, lightweight Vanilla Web Components & Diagnostic Controls.
- * Features URL state management, ARIA accessibility, focus trapping, reactive SVG rendering, popstate sync, and interactive table sorting.
+ * Features URL state management, ARIA accessibility, focus trapping, reactive SVG rendering, popstate sync, interactive table sorting, and drag-resizable splitters.
  */
 
 (function() {
@@ -18,18 +18,18 @@
       .replace(/'/g, '&#039;');
   }
 
-  // URL Query Sync Helper (Cleaned of Hash Fragments)
+  // URL Query Sync Helper (Preserving Hash Fragments)
   function setUrlParam(key, val) {
     const url = new URL(window.location.href);
     const currentVal = url.searchParams.get(key);
     if (val) {
       if (currentVal !== val) {
         url.searchParams.set(key, val);
-        window.history.replaceState({}, '', url.pathname + url.search);
+        window.history.replaceState({}, '', url.pathname + url.search + url.hash);
       }
     } else if (currentVal !== null) {
       url.searchParams.delete(key);
-      window.history.replaceState({}, '', url.pathname + url.search);
+      window.history.replaceState({}, '', url.pathname + url.search + url.hash);
     }
   }
 
@@ -88,11 +88,12 @@
   customElements.define('scranton-theme-switcher', ScrantonThemeSwitcher);
 
   // ---------------------------------------------------------------------------
-  // 2. <scranton-tabs> and <scranton-tab> with MutationObserver & Auto-Param
+  // 2. <scranton-tabs> and <scranton-tab> with MutationObserver & Active Index Preservation
   // ---------------------------------------------------------------------------
   class ScrantonTabs extends HTMLElement {
     constructor() {
       super();
+      this._activeIndex = 0;
       this._handleKeydown = this._handleKeydown.bind(this);
     }
 
@@ -103,7 +104,7 @@
           Array.from(m.addedNodes).concat(Array.from(m.removedNodes))
             .some(node => node.nodeType === 1 && node.tagName.toLowerCase() === 'scranton-tab')
         );
-        if (hasTabChanges) this.render();
+        if (hasTabChanges) this.render(true);
       });
       this._observer.observe(this, { childList: true });
     }
@@ -112,11 +113,10 @@
       if (this._observer) this._observer.disconnect();
     }
 
-    render() {
+    render(isMutation = false) {
       const syncUrl = this.hasAttribute('sync-url');
       let paramName = this.getAttribute('param-name') || 'tab';
       
-      // Auto-scope parameter name if multiple sync-url tabs exist
       if (syncUrl && !this.hasAttribute('param-name')) {
         const allSyncTabs = Array.from(document.querySelectorAll('scranton-tabs[sync-url]'));
         const idx = allSyncTabs.indexOf(this);
@@ -127,14 +127,17 @@
       const tabPanels = Array.from(this.children).filter(el => el.tagName.toLowerCase() === 'scranton-tab');
       if (tabPanels.length === 0) return;
 
-      let activeIndex = 0;
+      let activeIndex = isMutation ? (this._activeIndex < tabPanels.length ? this._activeIndex : 0) : 0;
       if (urlTab) {
         const found = tabPanels.findIndex(p => p.getAttribute('id') === urlTab || p.getAttribute('label').toLowerCase().replace(/\s+/g, '-') === urlTab);
         if (found !== -1) activeIndex = found;
       }
 
       const existingNav = this.querySelector(':scope > .sc-nav');
-      if (existingNav) existingNav.remove();
+      if (existingNav) {
+        existingNav.removeEventListener('keydown', this._handleKeydown);
+        existingNav.remove();
+      }
 
       const navEl = document.createElement('ul');
       navEl.className = 'sc-nav';
@@ -188,6 +191,7 @@
     }
 
     setActiveTab(index, syncUrl, paramName) {
+      this._activeIndex = index;
       const tabLinks = this.querySelectorAll(':scope > .sc-nav > li > .sc-nav-link');
       const tabPanels = Array.from(this.children).filter(el => el.tagName.toLowerCase() === 'scranton-tab');
 
@@ -226,7 +230,7 @@
   customElements.define('scranton-tab', ScrantonTab);
 
   // ---------------------------------------------------------------------------
-  // 3. <scranton-modal> with Focus Trapping & Accessibility
+  // 3. <scranton-modal> with aria-describedby & Focus Trap
   // ---------------------------------------------------------------------------
   class ScrantonModal extends HTMLElement {
     constructor() {
@@ -275,7 +279,7 @@
       if (this.querySelector('.sc-modal-backdrop')) return;
 
       const title = this.getAttribute('title') || 'System Window';
-      const modalId = this.getAttribute('id');
+      const modalId = this.getAttribute('id') || `modal-${Math.random().toString(36).substring(2, 6)}`;
 
       const fragment = document.createDocumentFragment();
       while (this.firstChild) {
@@ -288,6 +292,7 @@
       this.backdrop.setAttribute('role', 'dialog');
       this.backdrop.setAttribute('aria-modal', 'true');
       this.backdrop.setAttribute('aria-label', title);
+      this.backdrop.setAttribute('aria-describedby', `${modalId}-body`);
 
       const win = document.createElement('div');
       win.className = 'sc-window';
@@ -312,6 +317,7 @@
       titlebar.appendChild(controls);
 
       const body = document.createElement('div');
+      body.id = `${modalId}-body`;
       body.className = 'sc-pane-body';
       body.style.cssText = 'background: var(--sc-bg-panel); padding:12px;';
       body.appendChild(fragment);
@@ -368,7 +374,7 @@
   customElements.define('scranton-modal', ScrantonModal);
 
   // ---------------------------------------------------------------------------
-  // 4. <scranton-sparkline> with Fluid Responsive Scaling & Fixed Gradient IDs
+  // 4. <scranton-sparkline>
   // ---------------------------------------------------------------------------
   class ScrantonSparkline extends HTMLElement {
     static get observedAttributes() {
@@ -444,7 +450,7 @@
   customElements.define('scranton-sparkline', ScrantonSparkline);
 
   // ---------------------------------------------------------------------------
-  // 5. <scranton-metric-card>
+  // 5. <scranton-metric-card> with aria-live Telemetry Announcements
   // ---------------------------------------------------------------------------
   class ScrantonMetricCard extends HTMLElement {
     static get observedAttributes() {
@@ -478,7 +484,7 @@
             ${change ? `<span class="${badgeClass}">${change}</span>` : ''}
           </div>
           <div class="sc-card-body d-flex align-center justify-between" style="padding:6px 8px;">
-            <div class="sc-metric-value" style="font-size:18px; font-weight:800; font-family:var(--sc-font-mono); white-space:nowrap; flex-shrink:1; min-width:0;">${value}</div>
+            <div class="sc-metric-value" aria-live="polite" aria-atomic="true" style="font-size:18px; font-weight:800; font-family:var(--sc-font-mono); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:1; min-width:0;">${value}</div>
             ${sparklineVals ? `<scranton-sparkline values="${sparklineVals}" width="64" height="20" style="flex-shrink:0; margin-left:6px;"></scranton-sparkline>` : ''}
           </div>
         </div>
@@ -488,7 +494,7 @@
   customElements.define('scranton-metric-card', ScrantonMetricCard);
 
   // ---------------------------------------------------------------------------
-  // 6. Global Toast Notification Helper (Max Queue Cap 4 & Timer Pause)
+  // 6. Global Toast Notification Helper
   // ---------------------------------------------------------------------------
   window.scrantonToast = function(msg, type = 'info') {
     let container = document.getElementById('sc-toast-container');
@@ -501,7 +507,6 @@
       document.body.appendChild(container);
     }
 
-    // Queue cap: max 4 active toasts
     const existing = container.querySelectorAll('.sc-alert');
     if (existing.length >= 4) {
       existing[0].remove();
@@ -526,11 +531,14 @@
     setTimeout(() => { if (prog) prog.style.width = '0%'; }, 50);
 
     let autoRemoveTimer = null;
+    let startTime = Date.now();
+    let remaining = 4000;
 
-    const startTimer = () => {
+    const startTimer = (duration) => {
+      startTime = Date.now();
       autoRemoveTimer = setTimeout(() => {
         if (toast.parentNode) toast.remove();
-      }, 4000);
+      }, duration);
     };
 
     const dismiss = () => {
@@ -541,23 +549,49 @@
     toast.querySelector('button').addEventListener('click', dismiss);
     toast.addEventListener('mouseenter', () => {
       if (autoRemoveTimer) clearTimeout(autoRemoveTimer);
+      remaining -= (Date.now() - startTime);
       if (prog) prog.style.transition = 'none';
     });
     toast.addEventListener('mouseleave', () => {
-      startTimer();
-      if (prog) {
-        prog.style.transition = 'width 4s linear';
-        prog.style.width = '0%';
+      if (remaining > 0) {
+        startTimer(remaining);
+        if (prog) {
+          prog.style.transition = `width ${remaining / 1000}s linear`;
+          prog.style.width = '0%';
+        }
+      } else {
+        dismiss();
       }
     });
 
     container.appendChild(toast);
-    startTimer();
+    startTimer(4000);
   };
 
   // ---------------------------------------------------------------------------
-  // 7. Interactive Table Column Sorting Engine
+  // 7. Interactive Table Column Sorting Engine (Currency & Item ID Edge Case Fixes)
   // ---------------------------------------------------------------------------
+  function parseCellValue(cell) {
+    if (cell.hasAttribute('data-sort-value')) return cell.getAttribute('data-sort-value');
+    const text = cell.textContent.trim();
+    
+    // Check parenthesized negative financial numbers: ($14,250) -> -14250
+    if (text.startsWith('(') && text.endsWith(')')) {
+      const num = parseFloat(text.replace(/[^0-9.]+/g, ''));
+      if (!isNaN(num)) return -num;
+    }
+
+    // Check item code hyphens vs negative signs: "DM-1049" should sort as string
+    if (text.match(/^[A-Za-z0-9]+-[A-Za-z0-9]+$/)) {
+      return text;
+    }
+
+    // Clean currency symbols, commas, and percentage signs
+    const cleanStr = text.replace(/[$%,]/g, '');
+    const cleanNum = parseFloat(cleanStr);
+    return isNaN(cleanNum) ? text : cleanNum;
+  }
+
   function initTableSorting() {
     document.querySelectorAll('table.sc-table').forEach(table => {
       const headers = table.querySelectorAll('th');
@@ -588,16 +622,13 @@
             if (indicator) indicator.textContent = isAsc ? '▲' : '▼';
 
             rows.sort((rowA, rowB) => {
-              const cellA = rowA.children[colIdx] ? rowA.children[colIdx].textContent.trim() : '';
-              const cellB = rowB.children[colIdx] ? rowB.children[colIdx].textContent.trim() : '';
+              const valA = parseCellValue(rowA.children[colIdx] || { textContent: '' });
+              const valB = parseCellValue(rowB.children[colIdx] || { textContent: '' });
 
-              const numA = parseFloat(cellA.replace(/[^0-9.-]+/g, ''));
-              const numB = parseFloat(cellB.replace(/[^0-9.-]+/g, ''));
-
-              if (!isNaN(numA) && !isNaN(numB) && cellA.match(/^[$\d.,%-]+$/)) {
-                return isAsc ? numA - numB : numB - numA;
+              if (typeof valA === 'number' && typeof valB === 'number') {
+                return isAsc ? valA - valB : valB - valA;
               }
-              return isAsc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+              return isAsc ? String(valA).localeCompare(String(valB)) : String(valB).localeCompare(String(valA));
             });
 
             rows.forEach(r => tbody.appendChild(r));
@@ -616,7 +647,78 @@
   }
 
   // ---------------------------------------------------------------------------
-  // 8. Global Browser History Sync & Keyboard Tree View Handlers
+  // 8. Resizable Splitter Pointer Events Engine with Keyboard Support
+  // ---------------------------------------------------------------------------
+  function initSplitters() {
+    document.querySelectorAll('.sc-splitter').forEach(splitter => {
+      splitter.setAttribute('role', 'separator');
+      splitter.setAttribute('tabindex', '0');
+      splitter.setAttribute('aria-label', 'Resize Pane Splitter');
+
+      const isVertical = splitter.classList.contains('sc-splitter-vertical');
+      const prevPane = splitter.previousElementSibling;
+      const nextPane = splitter.nextElementSibling;
+      if (!prevPane || !nextPane) return;
+
+      let isDragging = false;
+
+      const onPointerDown = (e) => {
+        isDragging = true;
+        splitter.setPointerCapture(e.pointerId);
+        document.body.style.cursor = isVertical ? 'row-resize' : 'col-resize';
+        document.body.style.userSelect = 'none';
+      };
+
+      const onPointerMove = (e) => {
+        if (!isDragging) return;
+        const container = splitter.parentElement;
+        if (!container) return;
+        const rect = container.getBoundingClientRect();
+
+        if (!isVertical) {
+          const offsetX = e.clientX - rect.left;
+          const pct = Math.max(10, Math.min(90, (offsetX / rect.width) * 100));
+          prevPane.style.flex = `0 0 ${pct}%`;
+          nextPane.style.flex = `1 1 0%`;
+        } else {
+          const offsetY = e.clientY - rect.top;
+          const pct = Math.max(10, Math.min(90, (offsetY / rect.height) * 100));
+          prevPane.style.flex = `0 0 ${pct}%`;
+          nextPane.style.flex = `1 1 0%`;
+        }
+      };
+
+      const onPointerUp = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(err) {}
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      };
+
+      splitter.addEventListener('pointerdown', onPointerDown);
+      splitter.addEventListener('pointermove', onPointerMove);
+      splitter.addEventListener('pointerup', onPointerUp);
+
+      // Keyboard Arrow Adjustments
+      splitter.addEventListener('keydown', (e) => {
+        if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+          e.preventDefault();
+          const currentFlex = parseFloat(prevPane.style.flexBasis) || 50;
+          let delta = 0;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') delta = -5;
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') delta = 5;
+
+          const newPct = Math.max(10, Math.min(90, currentFlex + delta));
+          prevPane.style.flex = `0 0 ${newPct}%`;
+          nextPane.style.flex = `1 1 0%`;
+        }
+      });
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // 9. Global History Sync, Tree View & Pane Toggles
   // ---------------------------------------------------------------------------
   window.addEventListener('popstate', () => {
     document.querySelectorAll('scranton-tabs[sync-url]').forEach(tabs => tabs.render());
@@ -632,9 +734,11 @@
 
   function initGlobalHandlers() {
     initTableSorting();
+    initSplitters();
 
-    // Data Table Row Selection (Guarded against interactive & custom elements)
+    // Data Table Row Selection (Guarded against text selection)
     document.addEventListener('click', (e) => {
+      if (window.getSelection && window.getSelection().toString().length > 0) return;
       if (e.target.closest('a, button, input, select, label, textarea, scranton-sparkline, scranton-metric-card, [data-no-select]')) return;
       const row = e.target.closest('.sc-table-hover tbody tr');
       if (row) {
@@ -646,7 +750,7 @@
       }
     });
 
-    // Sidebar Tree View Toggle (Accessibility & Keyboard Operability)
+    // Sidebar Tree View Toggle & WAI-ARIA Directional Arrow Navigation
     document.querySelectorAll('.sc-tree-node').forEach(node => {
       node.setAttribute('tabindex', '0');
       node.setAttribute('role', 'treeitem');
@@ -678,16 +782,41 @@
     });
 
     document.addEventListener('keydown', (e) => {
+      if (e.target.closest('input, select, textarea, button')) return;
+      const treeNode = e.target.closest('.sc-tree-node');
+      if (!treeNode) return;
+
+      const visibleNodes = Array.from(document.querySelectorAll('.sc-tree-node'))
+        .filter(n => n.offsetWidth > 0 && n.offsetHeight > 0);
+      const idx = visibleNodes.indexOf(treeNode);
+
       if (e.key === 'Enter' || e.key === ' ') {
-        const treeNode = e.target.closest('.sc-tree-node');
-        if (treeNode) {
+        e.preventDefault();
+        treeNode.click();
+      } else if (e.key === 'ArrowDown' && idx < visibleNodes.length - 1) {
+        e.preventDefault();
+        visibleNodes[idx + 1].focus();
+      } else if (e.key === 'ArrowUp' && idx > 0) {
+        e.preventDefault();
+        visibleNodes[idx - 1].focus();
+      } else if (e.key === 'ArrowRight') {
+        const parentLi = treeNode.closest('li');
+        const subUl = parentLi ? parentLi.querySelector(':scope > ul') : null;
+        if (subUl && subUl.style.display === 'none') {
+          e.preventDefault();
+          treeNode.click();
+        }
+      } else if (e.key === 'ArrowLeft') {
+        const parentLi = treeNode.closest('li');
+        const subUl = parentLi ? parentLi.querySelector(':scope > ul') : null;
+        if (subUl && subUl.style.display !== 'none') {
           e.preventDefault();
           treeNode.click();
         }
       }
     });
 
-    // Split Pane Body Collapse Toggle (Guarded against form submission)
+    // Split Pane Body Collapse Toggle (Pure CSS Chevron Rotation Physics)
     document.addEventListener('click', (e) => {
       const toggleBtn = e.target.closest('.sc-pane-toggle');
       if (toggleBtn) {
@@ -698,7 +827,7 @@
           if (body) {
             const isHidden = body.style.display === 'none';
             body.style.display = isHidden ? 'block' : 'none';
-            toggleBtn.textContent = isHidden ? '▼' : '▲';
+            pane.classList.toggle('collapsed', isHidden);
             toggleBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
           }
         }

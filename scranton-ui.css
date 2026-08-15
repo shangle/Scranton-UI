@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SCRANTON-UI v1.3.0
+   SCRANTON-UI v1.4.0
    App-First, Information-Dense CSS Framework
    Designed for High-Density Desktop Interfaces & Diagnostic Panels
    Inspired by Dunder Mifflin Paper Company, Inc.
@@ -104,6 +104,9 @@
   --sc-border-dark: #475569;
   --sc-border-light: #1e293b;
 
+  --sc-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --sc-shadow-md: 0 6px 16px -2px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+
   --sc-primary: #3b82f6;
   --sc-primary-hover: #60a5fa;
   --sc-primary-fg: #ffffff;
@@ -145,12 +148,15 @@
 
   --sc-text: #fef3c7;          /* Parchment Light Yellow */
   --sc-text-muted: #fde68a;
-  --sc-text-dim: #f59e0b;
+  --sc-text-dim: #fbbf24;
   --sc-text-inv: #210515;
 
   --sc-border: #701a75;
   --sc-border-dark: #a21caf;
   --sc-border-light: #500e34;
+
+  --sc-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --sc-shadow-md: 0 6px 16px -2px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
 
   --sc-primary: #d97706;       /* Dwight Mustard Yellow Accent */
   --sc-primary-hover: #b45309;
@@ -199,11 +205,17 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Focus Indicator System (WCAG AA 4.5:1) */
+  /* Dual-Tone High-Contrast Keyboard Focus System (WCAG AA) */
   :focus-visible {
-    outline: 2px solid var(--sc-primary);
-    outline-offset: -1px;
-    z-index: 10;
+    outline: 2px solid var(--sc-primary) !important;
+    outline-offset: 1px !important;
+    box-shadow: 0 0 0 1px var(--sc-bg-panel), 0 0 0 3px var(--sc-primary) !important;
+    z-index: 20 !important;
+  }
+
+  .sc-btn-primary:focus-visible {
+    outline-color: var(--sc-accent) !important;
+    box-shadow: 0 0 0 1px var(--sc-bg-panel), 0 0 0 3px var(--sc-accent) !important;
   }
 
   /* Selection State */
@@ -357,8 +369,8 @@
   }
 
   .sc-pane-header {
-    height: 26px;
-    min-height: 26px;
+    height: 28px;
+    min-height: 28px;
     background-color: var(--sc-bg-subtle);
     border-bottom: 1px solid var(--sc-border);
     padding: 0 8px;
@@ -372,16 +384,32 @@
     letter-spacing: 0.02em;
   }
 
+  /* Pure CSS Triangle Chevron for Smooth Rotate Collapse Physics */
   .sc-pane-toggle {
     background: none;
     border: none;
     color: var(--sc-text-dim);
     cursor: pointer;
-    font-size: 10px;
     padding: 0 4px;
-    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
-  .sc-pane-toggle:hover { color: var(--sc-text); }
+
+  .sc-pane-chevron {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--sc-text-dim);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .sc-pane.collapsed .sc-pane-chevron,
+  .sc-card.collapsed .sc-pane-chevron {
+    transform: rotate(-90deg);
+  }
 
   .sc-pane-body {
     flex: 1;
@@ -397,7 +425,7 @@
     position: relative;
   }
 
-  /* Resizable Split Pane Drag Handle */
+  /* Resizable Split Pane Drag Handle with Keyboard Support */
   .sc-splitter {
     width: 5px;
     background: var(--sc-border);
@@ -408,6 +436,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    touch-action: none;
   }
 
   .sc-splitter::after {
@@ -419,11 +448,11 @@
     opacity: 0.6;
   }
 
-  .sc-splitter:hover, .sc-splitter:active {
+  .sc-splitter:hover, .sc-splitter:active, .sc-splitter:focus-visible {
     background: var(--sc-primary);
     width: 6px;
   }
-  .sc-splitter:hover::after, .sc-splitter:active::after {
+  .sc-splitter:hover::after, .sc-splitter:active::after, .sc-splitter:focus-visible::after {
     color: var(--sc-primary-fg);
     opacity: 1.0;
   }
@@ -457,15 +486,16 @@
   .sc-statusbar-item {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 0 6px;
+    gap: 6px;
+    padding: 0 8px;
     border-right: 1px solid var(--sc-border);
+    height: 100%;
   }
   .sc-statusbar-item:last-child { border-right: none; }
 
   .sc-status-label {
     color: var(--sc-text-dim);
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .sc-status-val {
@@ -508,13 +538,14 @@
   @media (max-width: 768px) {
     .sc-col-sm-12 { width: 100% !important; }
     .sc-col-sm-6  { width: 50% !important; }
-    .sc-sidebar { width: 100% !important; max-width: 100% !important; }
-    .sc-body { flex-direction: column; }
+    .sc-sidebar { width: 100% !important; max-height: 40vh !important; overflow-y: auto !important; }
+    .sc-body { flex-direction: column; overflow-y: auto !important; }
   }
 
   @media (max-width: 1024px) {
     .sc-col-md-12 { width: 100% !important; }
     .sc-col-md-6  { width: 50% !important; }
+    .sc-btn-label { display: none !important; }
   }
 }
 
@@ -758,9 +789,11 @@
     resize: vertical;
   }
 
+  /* Compound Input Group Focus Boundary */
   .sc-input-group {
     display: flex;
     width: 100%;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
 
   .sc-input-group > .sc-input {
@@ -769,6 +802,14 @@
 
   .sc-input-group > *:not(:first-child) {
     margin-left: -1px;
+  }
+
+  .sc-input-group:focus-within .sc-input-addon {
+    border-color: var(--sc-primary);
+  }
+
+  .sc-input-group:focus-within {
+    box-shadow: 0 0 0 1px var(--sc-primary);
   }
 
   .sc-input-addon {
@@ -782,7 +823,7 @@
     white-space: nowrap;
   }
 
-  /* Custom Checkboxes and Radios */
+  /* Custom 0px Square Radio & Checkbox Controls */
   .sc-check {
     display: inline-flex;
     align-items: center;
@@ -796,6 +837,7 @@
   .sc-check input[type="checkbox"],
   .sc-check input[type="radio"] {
     appearance: none;
+    -webkit-appearance: none;
     width: 12px;
     height: 12px;
     border: 1px solid var(--sc-border-dark);
@@ -805,25 +847,40 @@
     align-items: center;
     justify-content: center;
     margin: 0;
+    border-radius: 0px !important;
+  }
+
+  .sc-check input[type="checkbox"]:focus-visible,
+  .sc-check input[type="radio"]:focus-visible {
+    outline: 2px solid var(--sc-primary) !important;
+    outline-offset: 2px !important;
+  }
+
+  .sc-check input[type="checkbox"]:checked {
+    background-color: var(--sc-primary);
+    border-color: var(--sc-primary);
   }
 
   .sc-check input[type="checkbox"]:checked::after {
-    content: "✓";
-    font-size: 10px;
-    font-weight: 900;
-    color: var(--sc-primary);
-    line-height: 1;
+    content: "";
+    width: 3px;
+    height: 6px;
+    border: solid var(--sc-primary-fg);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-top: -1px;
   }
 
-  .sc-check input[type="radio"] {
-    border-radius: 50% !important;
+  .sc-check input[type="radio"]:checked {
+    background-color: var(--sc-bg-panel);
+    border-color: var(--sc-primary);
   }
 
   .sc-check input[type="radio"]:checked::after {
-    content: "•";
-    font-size: 14px;
-    color: var(--sc-primary);
-    line-height: 1;
+    content: "";
+    width: 6px;
+    height: 6px;
+    background-color: var(--sc-primary);
   }
 
   /* Diagnostic Toggle Switch */
@@ -1070,6 +1127,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    min-height: 28px;
   }
 
   .sc-card-header-actions {
@@ -1083,14 +1141,29 @@
     padding: 8px;
   }
 
-  /* Skeleton Loading State */
+  /* Theme-Neutral Skeleton Loading State */
   .sc-skeleton {
-    background: linear-gradient(90deg, var(--sc-bg-subtle) 25%, var(--sc-bg-hover) 37%, var(--sc-bg-subtle) 63%);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 25%,
+      rgba(255, 255, 255, 0.12) 37%,
+      rgba(255, 255, 255, 0.04) 63%
+    );
     background-size: 400% 100%;
     animation: sc-skeleton-anim 1.4s ease infinite;
     display: inline-block;
     height: 12px;
     width: 100%;
+  }
+
+  [data-theme="theme-light"] .sc-skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.04) 25%,
+      rgba(0, 0, 0, 0.09) 37%,
+      rgba(0, 0, 0, 0.04) 63%
+    );
+    background-size: 400% 100%;
   }
 
   @keyframes sc-skeleton-anim {
@@ -1194,7 +1267,8 @@
     font-size: 9px;
     font-weight: 800;
     background: var(--sc-bg-active);
-    color: var(--sc-text-muted);
+    color: var(--sc-text-inv);
+    border: 1px solid var(--sc-border-dark);
     line-height: 1;
   }
   .sc-nav-link.active .sc-nav-badge {
@@ -1245,10 +1319,14 @@
   .sc-breadcrumbs li::after {
     content: "/";
     margin-left: 4px;
-    color: var(--sc-border-dark);
+    color: var(--sc-text-dim);
   }
   .sc-breadcrumbs li:last-child::after {
     content: "";
+  }
+  .sc-breadcrumbs li:last-child {
+    font-weight: 700;
+    color: var(--sc-text);
   }
   .sc-breadcrumbs a {
     color: var(--sc-text-muted);
@@ -1281,7 +1359,7 @@
 @layer components {
   .sc-tools-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 6px;
     padding: 8px;
   }
@@ -1477,8 +1555,25 @@
 }
 
 /* --------------------------------------------------------------------------
-   16. Accessibility & Print Overrides
+   16. Accessibility, High Contrast & Print Overrides
    -------------------------------------------------------------------------- */
+@media (forced-colors: active) {
+  .sc-btn.active, .sc-nav-link.active {
+    border: 2px solid Highlight !important;
+    color: HighlightText !important;
+  }
+  .sc-led {
+    border: 1px solid CanvasText !important;
+  }
+  .sc-check input:checked {
+    background-color: Highlight !important;
+    border-color: Highlight !important;
+  }
+  .sc-pane, .sc-card, .sc-window {
+    border: 1px solid CanvasText !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
