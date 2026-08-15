@@ -1,5 +1,5 @@
 /**
- * Scranton-UI Custom Web Components v1.4.0
+ * Scranton-UI Custom Web Components v1.5.0
  * Zero-dependency, lightweight Vanilla Web Components & Diagnostic Controls.
  * Features URL state management, ARIA accessibility, focus trapping, reactive SVG rendering, popstate sync, interactive table sorting, and drag-resizable splitters.
  */
@@ -88,7 +88,7 @@
   customElements.define('scranton-theme-switcher', ScrantonThemeSwitcher);
 
   // ---------------------------------------------------------------------------
-  // 2. <scranton-tabs> and <scranton-tab> with MutationObserver & Active Index Preservation
+  // 2. <scranton-tabs> and <scranton-tab>
   // ---------------------------------------------------------------------------
   class ScrantonTabs extends HTMLElement {
     constructor() {
@@ -145,6 +145,7 @@
 
       tabPanels.forEach((panel, idx) => {
         const label = panel.getAttribute('label') || `Tab ${idx + 1}`;
+        const badgeVal = panel.getAttribute('badge');
         const tabId = panel.getAttribute('id') || label.toLowerCase().replace(/\s+/g, '-');
         panel.setAttribute('id', tabId);
         panel.setAttribute('role', 'tabpanel');
@@ -154,7 +155,7 @@
         const a = document.createElement('a');
         a.id = `tab-link-${tabId}`;
         a.className = `sc-nav-link ${idx === activeIndex ? 'active' : ''}`;
-        a.textContent = label;
+        a.innerHTML = `${escapeHTML(label)} ${badgeVal ? `<span class="sc-nav-badge">${escapeHTML(badgeVal)}</span>` : ''}`;
         a.setAttribute('role', 'tab');
         a.setAttribute('aria-selected', idx === activeIndex ? 'true' : 'false');
         a.setAttribute('tabindex', idx === activeIndex ? '0' : '-1');
@@ -282,13 +283,13 @@
       const modalId = this.getAttribute('id') || `modal-${Math.random().toString(36).substring(2, 6)}`;
 
       const fragment = document.createDocumentFragment();
-      while (this.firstChild) {
-        fragment.appendChild(this.firstChild);
-      }
+      Array.from(this.childNodes).forEach(child => {
+        fragment.appendChild(child.cloneNode(true));
+      });
 
       this.backdrop = document.createElement('div');
       this.backdrop.className = 'sc-modal-backdrop';
-      this.backdrop.style.cssText = 'display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; align-items:center; justify-content:center;';
+      this.backdrop.style.cssText = 'display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; align-items:center; justify-content:center; opacity:0; transition: opacity 0.15s ease;';
       this.backdrop.setAttribute('role', 'dialog');
       this.backdrop.setAttribute('aria-modal', 'true');
       this.backdrop.setAttribute('aria-label', title);
@@ -344,6 +345,7 @@
       if (this.backdrop) {
         this._previousActiveElement = document.activeElement;
         this.backdrop.style.display = 'flex';
+        setTimeout(() => { if (this.backdrop) this.backdrop.style.opacity = '1'; }, 10);
         document.body.style.overflow = 'hidden';
         const modalId = this.getAttribute('id');
         if (modalId) setUrlParam('modal', modalId);
@@ -359,7 +361,10 @@
 
     close() {
       if (this.backdrop) {
-        this.backdrop.style.display = 'none';
+        this.backdrop.style.opacity = '0';
+        setTimeout(() => {
+          if (this.backdrop) this.backdrop.style.display = 'none';
+        }, 150);
         document.body.style.overflow = '';
         const modalId = this.getAttribute('id');
         if (modalId && getUrlParam('modal') === modalId) {
@@ -398,7 +403,7 @@
 
       const width = parseInt(this.getAttribute('width') || '100', 10);
       const height = parseInt(this.getAttribute('height') || '24', 10);
-      const color = escapeHTML(this.getAttribute('color') || 'var(--sc-accent, #0284c7)');
+      const color = escapeHTML(this.getAttribute('color') || 'var(--sc-accent)');
       const isFluid = this.hasAttribute('fluid');
 
       const svgWidth = isFluid ? '100%' : width;
@@ -450,7 +455,7 @@
   customElements.define('scranton-sparkline', ScrantonSparkline);
 
   // ---------------------------------------------------------------------------
-  // 5. <scranton-metric-card> with aria-live Telemetry Announcements
+  // 5. <scranton-metric-card> with Trend Direction Arrow Vectors
   // ---------------------------------------------------------------------------
   class ScrantonMetricCard extends HTMLElement {
     static get observedAttributes() {
@@ -474,14 +479,17 @@
       const sparklineVals = escapeHTML(this.getAttribute('sparkline') || '');
 
       let badgeClass = 'sc-badge';
-      if (isUp) badgeClass += ' sc-badge-success';
-      if (isDown) badgeClass += ' sc-badge-danger';
+      let trendPrefix = '';
+      if (isUp) { badgeClass += ' sc-badge-success'; trendPrefix = '▲ '; }
+      if (isDown) { badgeClass += ' sc-badge-danger'; trendPrefix = '▼ '; }
+
+      const changeText = change ? `${trendPrefix}${change}` : '';
 
       this.innerHTML = `
         <div class="sc-card" style="margin-bottom:0; height:100%;">
           <div class="sc-card-header">
             <span title="${title}">${title}</span>
-            ${change ? `<span class="${badgeClass}">${change}</span>` : ''}
+            ${changeText ? `<span class="${badgeClass}">${changeText}</span>` : ''}
           </div>
           <div class="sc-card-body d-flex align-center justify-between" style="padding:6px 8px;">
             <div class="sc-metric-value" aria-live="polite" aria-atomic="true" style="font-size:18px; font-weight:800; font-family:var(--sc-font-mono); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:1; min-width:0;">${value}</div>
@@ -503,7 +511,6 @@
       container.id = 'sc-toast-container';
       container.setAttribute('role', 'region');
       container.setAttribute('aria-live', 'polite');
-      container.style.cssText = 'position:fixed; bottom:28px; right:12px; z-index:99999; display:flex; flex-direction:column; gap:4px; max-width:320px;';
       document.body.appendChild(container);
     }
 
@@ -520,10 +527,10 @@
     toast.style.cssText = 'margin:0; position:relative; box-shadow: var(--sc-shadow-md); animation: fadeIn 0.2s; overflow:hidden;';
     toast.innerHTML = `
       <div class="d-flex align-center gap-2">
-        <span style="font-size:12px; font-weight:bold;">${icons[safeType] || 'ⓘ'}</span>
+        <span class="sc-alert-icon" style="font-size:12px; font-weight:bold;">${icons[safeType] || 'ⓘ'}</span>
         <span>${escapeHTML(msg)}</span>
       </div>
-      <button type="button" aria-label="Close Toast" style="background:none; border:none; color:inherit; font-weight:bold; cursor:pointer; margin-left:8px;">✕</button>
+      <button type="button" class="sc-alert-close" aria-label="Close Toast">✕</button>
       <div class="sc-toast-progress" style="position:absolute; bottom:0; left:0; height:2px; background:currentColor; opacity:0.6; width:100%; transition: width 4s linear;"></div>
     `;
 
@@ -532,13 +539,14 @@
 
     let autoRemoveTimer = null;
     let startTime = Date.now();
-    let remaining = 4000;
+    let durationTotal = 4000;
 
-    const startTimer = (duration) => {
+    const startTimer = (dur) => {
       startTime = Date.now();
+      durationTotal = dur;
       autoRemoveTimer = setTimeout(() => {
         if (toast.parentNode) toast.remove();
-      }, duration);
+      }, dur);
     };
 
     const dismiss = () => {
@@ -546,17 +554,18 @@
       toast.remove();
     };
 
-    toast.querySelector('button').addEventListener('click', dismiss);
+    toast.querySelector('.sc-alert-close').addEventListener('click', dismiss);
     toast.addEventListener('mouseenter', () => {
       if (autoRemoveTimer) clearTimeout(autoRemoveTimer);
-      remaining -= (Date.now() - startTime);
+      const elapsed = Date.now() - startTime;
+      durationTotal = Math.max(100, durationTotal - elapsed);
       if (prog) prog.style.transition = 'none';
     });
     toast.addEventListener('mouseleave', () => {
-      if (remaining > 0) {
-        startTimer(remaining);
+      if (durationTotal > 100) {
+        startTimer(durationTotal);
         if (prog) {
-          prog.style.transition = `width ${remaining / 1000}s linear`;
+          prog.style.transition = `width ${durationTotal / 1000}s linear`;
           prog.style.width = '0%';
         }
       } else {
@@ -569,21 +578,31 @@
   };
 
   // ---------------------------------------------------------------------------
-  // 7. Interactive Table Column Sorting Engine (Currency & Item ID Edge Case Fixes)
+  // 7. Interactive Table Column Sorting Engine (K-Suffix & Parentheses Parsing)
   // ---------------------------------------------------------------------------
   function parseCellValue(cell) {
     if (cell.hasAttribute('data-sort-value')) return cell.getAttribute('data-sort-value');
     const text = cell.textContent.trim();
     
-    // Check parenthesized negative financial numbers: ($14,250) -> -14250
+    // Parenthesized negative financial numbers: ($14,250) -> -14250
     if (text.startsWith('(') && text.endsWith(')')) {
       const num = parseFloat(text.replace(/[^0-9.]+/g, ''));
       if (!isNaN(num)) return -num;
     }
 
-    // Check item code hyphens vs negative signs: "DM-1049" should sort as string
+    // Item code hyphens vs negative signs: "DM-1049"
     if (text.match(/^[A-Za-z0-9]+-[A-Za-z0-9]+$/)) {
       return text;
+    }
+
+    // K/M Abbreviated Multipliers: +$42.1k -> 42100
+    const kMatch = text.match(/^[+$-]?([\d.]+)\s*k$/i);
+    if (kMatch) {
+      return parseFloat(kMatch[1]) * 1000;
+    }
+    const mMatch = text.match(/^[+$-]?([\d.]+)\s*m$/i);
+    if (mMatch) {
+      return parseFloat(mMatch[1]) * 1000000;
     }
 
     // Clean currency symbols, commas, and percentage signs
@@ -645,9 +664,10 @@
       });
     });
   }
+  window.scrantonReinitSorting = initTableSorting;
 
   // ---------------------------------------------------------------------------
-  // 8. Resizable Splitter Pointer Events Engine with Keyboard Support
+  // 8. Resizable Splitter Pointer Events Engine
   // ---------------------------------------------------------------------------
   function initSplitters() {
     document.querySelectorAll('.sc-splitter').forEach(splitter => {
@@ -662,11 +682,13 @@
 
       let isDragging = false;
 
-      const onPointerDown = (e) => {
-        isDragging = true;
-        splitter.setPointerCapture(e.pointerId);
-        document.body.style.cursor = isVertical ? 'row-resize' : 'col-resize';
-        document.body.style.userSelect = 'none';
+      const stopDrag = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', stopDrag);
       };
 
       const onPointerMove = (e) => {
@@ -688,23 +710,21 @@
         }
       };
 
-      const onPointerUp = (e) => {
-        if (!isDragging) return;
-        isDragging = false;
-        try { splitter.releasePointerCapture(e.pointerId); } catch(err) {}
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
+      const onPointerDown = (e) => {
+        isDragging = true;
+        document.body.style.cursor = isVertical ? 'row-resize' : 'col-resize';
+        document.body.style.userSelect = 'none';
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', stopDrag);
       };
 
       splitter.addEventListener('pointerdown', onPointerDown);
-      splitter.addEventListener('pointermove', onPointerMove);
-      splitter.addEventListener('pointerup', onPointerUp);
 
       // Keyboard Arrow Adjustments
       splitter.addEventListener('keydown', (e) => {
         if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
           e.preventDefault();
-          const currentFlex = parseFloat(prevPane.style.flexBasis) || 50;
+          const currentFlex = parseFloat(prevPane.style.flex) || 50;
           let delta = 0;
           if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') delta = -5;
           if (e.key === 'ArrowRight' || e.key === 'ArrowDown') delta = 5;
@@ -718,7 +738,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  // 9. Global History Sync, Tree View & Pane Toggles
+  // 9. Global History Sync, Scoped Tree Navigation & Pane Toggles
   // ---------------------------------------------------------------------------
   window.addEventListener('popstate', () => {
     document.querySelectorAll('scranton-tabs[sync-url]').forEach(tabs => tabs.render());
@@ -736,7 +756,7 @@
     initTableSorting();
     initSplitters();
 
-    // Data Table Row Selection (Guarded against text selection)
+    // Data Table Row Selection (Guarded & set aria-selected)
     document.addEventListener('click', (e) => {
       if (window.getSelection && window.getSelection().toString().length > 0) return;
       if (e.target.closest('a, button, input, select, label, textarea, scranton-sparkline, scranton-metric-card, [data-no-select]')) return;
@@ -744,13 +764,17 @@
       if (row) {
         const table = row.closest('table');
         if (table) {
-          table.querySelectorAll('tr').forEach(r => r.classList.remove('selected'));
+          table.querySelectorAll('tr').forEach(r => {
+            r.classList.remove('selected');
+            r.setAttribute('aria-selected', 'false');
+          });
           row.classList.add('selected');
+          row.setAttribute('aria-selected', 'true');
         }
       }
     });
 
-    // Sidebar Tree View Toggle & WAI-ARIA Directional Arrow Navigation
+    // Sidebar Tree View Toggle & Scoped Keyboard Navigation
     document.querySelectorAll('.sc-tree-node').forEach(node => {
       node.setAttribute('tabindex', '0');
       node.setAttribute('role', 'treeitem');
@@ -786,7 +810,8 @@
       const treeNode = e.target.closest('.sc-tree-node');
       if (!treeNode) return;
 
-      const visibleNodes = Array.from(document.querySelectorAll('.sc-tree-node'))
+      const container = treeNode.closest('.sc-tree, .sc-sidebar') || document;
+      const visibleNodes = Array.from(container.querySelectorAll('.sc-tree-node'))
         .filter(n => n.offsetWidth > 0 && n.offsetHeight > 0);
       const idx = visibleNodes.indexOf(treeNode);
 

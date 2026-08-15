@@ -6,13 +6,6 @@
   <title>The Michael Scott Paper Company "Market Watch" — Scranton-UI Showcase</title>
   <link rel="stylesheet" href="scranton-ui.css">
   <script src="scranton-components.js" defer></script>
-  <style>
-    .sc-table-terminal td, .sc-table-terminal th {
-      padding: 3px 6px;
-      font-size: 10.5px;
-      font-family: var(--sc-font-mono);
-    }
-  </style>
 </head>
 <body class="sc-app">
 
@@ -55,7 +48,7 @@
             </div>
           </div>
           <div class="sc-pane-body-nopad">
-            <table class="sc-table sc-table-striped sc-table-hover sc-table-terminal">
+            <table class="sc-table sc-table-compact sc-table-striped sc-table-hover">
               <thead>
                 <tr>
                   <th class="sortable">Ticker <span class="sc-sort-indicator">▲</span></th>
@@ -69,7 +62,7 @@
               </thead>
               <tbody id="ticker-tbody">
                 <tr id="row-dmn">
-                  <td class="fw-bold text-warning">DMN</td>
+                  <td class="fw-bold text-warning font-mono">DMN</td>
                   <td>Dunder Mifflin Inc.</td>
                   <td class="td-num" id="dmn-bid">48.20</td>
                   <td class="td-num" id="dmn-ask">48.25</td>
@@ -78,7 +71,7 @@
                   <td><scranton-sparkline values="40,42,41,45,44,48" width="50" height="14" color="#22c55e"></scranton-sparkline></td>
                 </tr>
                 <tr id="row-mspc">
-                  <td class="fw-bold text-accent">MSPC</td>
+                  <td class="fw-bold text-accent font-mono">MSPC</td>
                   <td>Michael Scott Paper Co.</td>
                   <td class="td-num" id="mspc-bid">2.45</td>
                   <td class="td-num" id="mspc-ask">2.48</td>
@@ -87,7 +80,7 @@
                   <td><scranton-sparkline values="1,1.2,1.5,1.8,2.1,2.48" width="50" height="14" color="#38bdf8"></scranton-sparkline></td>
                 </tr>
                 <tr id="row-prnc">
-                  <td class="fw-bold text-danger">PRNC</td>
+                  <td class="fw-bold text-danger font-mono">PRNC</td>
                   <td>Prince Family Paper</td>
                   <td class="td-num">12.10</td>
                   <td class="td-num">12.15</td>
@@ -96,7 +89,7 @@
                   <td><scranton-sparkline values="20,18,16,14,13,12.1" width="50" height="14" color="#ef4444"></scranton-sparkline></td>
                 </tr>
                 <tr id="row-vrfg">
-                  <td class="fw-bold text-primary">VRFG</td>
+                  <td class="fw-bold text-primary font-mono">VRFG</td>
                   <td>Vance Refrigeration</td>
                   <td class="td-num">104.50</td>
                   <td class="td-num">104.80</td>
@@ -105,7 +98,7 @@
                   <td><scranton-sparkline values="100,102,101,103,104,104.5" width="50" height="14" color="#3b82f6"></scranton-sparkline></td>
                 </tr>
                 <tr id="row-schr">
-                  <td class="fw-bold text-beet">SCHR</td>
+                  <td class="fw-bold text-beet font-mono">SCHR</td>
                   <td>Schrute Beet Agricultural</td>
                   <td class="td-num">88.40</td>
                   <td class="td-num">88.60</td>
@@ -134,7 +127,7 @@
             <!-- Bids Column -->
             <div style="flex:1; border-right:1px solid #26334d;">
               <div class="p-1 fw-bold text-success text-center" style="font-size:10px; background:#111827;">BUY ORDERS (BIDS)</div>
-              <table class="sc-table sc-table-terminal">
+              <table class="sc-table sc-table-compact">
                 <thead>
                   <tr>
                     <th class="th-num sortable">Qty (Reams)</th>
@@ -161,7 +154,7 @@
             <!-- Asks Column -->
             <div style="flex:1;">
               <div class="p-1 fw-bold text-danger text-center" style="font-size:10px; background:#111827;">SELL ORDERS (ASKS)</div>
-              <table class="sc-table sc-table-terminal">
+              <table class="sc-table sc-table-compact">
                 <thead>
                   <tr>
                     <th class="th-num sortable">Ask Price ($)</th>
@@ -274,7 +267,7 @@
   <!-- Statusbar -->
   <footer class="sc-statusbar">
     <div class="d-flex align-center">
-      <div class="sc-statusbar-item">
+      <div class="sc-statusbar-item sc-statusbar-item-interactive" onclick="scrantonToast('Connected to MSPC Arbitrage Node #01', 'info')">
         <span class="sc-led sc-led-green"></span><span class="sc-sr-only">Status: Online</span>
         <span class="sc-status-label">Engine:</span>
         <span class="sc-status-val">MSPC Arbitrage Online</span>

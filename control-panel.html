@@ -88,12 +88,16 @@
         <li>Toby Flenderson Complaint Registry</li>
       </ul>
 
-      <!-- Top Alert -->
+      <!-- Top Alert Banner with Icon and Dismiss Action -->
       <div class="sc-alert sc-alert-warning mb-3">
-        <div>
-          <strong>CONFIDENTIAL HR PORTAL:</strong> Logged in as <em>Toby Flenderson (HR Representative)</em>. All submissions are forwarded directly to Corporate in New York.
+        <div class="d-flex align-center">
+          <span class="sc-alert-icon">⚠</span>
+          <span><strong>CONFIDENTIAL HR PORTAL:</strong> Logged in as <em>Toby Flenderson (HR Representative)</em>. All submissions are forwarded directly to Corporate in New York.</span>
         </div>
-        <button type="button" class="sc-btn sc-btn-sm sc-btn-secondary" onclick="scrantonToast('Complaint Log Exported to PDF', 'info')">Export PDF Report</button>
+        <div class="d-flex align-center gap-2">
+          <button type="button" class="sc-btn sc-btn-sm sc-btn-secondary" onclick="scrantonToast('Complaint Log Exported to PDF', 'info')">Export PDF Report</button>
+          <button type="button" class="sc-alert-close" onclick="this.closest('.sc-alert').remove()">✕</button>
+        </div>
       </div>
 
       <!-- Main Form Card -->
@@ -330,6 +334,11 @@
           <td><span class="sc-badge sc-badge-warning">FILED TO NY</span></td>
         `;
         tbody.insertBefore(tr, tbody.firstChild);
+
+        // Re-initialize sorting handlers for newly appended dynamic table row
+        if (typeof window.scrantonReinitSorting === 'function') {
+          window.scrantonReinitSorting();
+        }
       }
 
       resetHRForm();
