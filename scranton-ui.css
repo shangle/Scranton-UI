@@ -1,0 +1,1116 @@
+/* ==========================================================================
+   Scranton-UI v1.0.0 — App-First & Information Dense CSS Framework
+   Philosophy: Zero padding fluff, sharp 0px corners, desktop diagnostic layout,
+   full Bootstrap utility parity + Desktop App Primitives.
+   Theme Lore: Dunder Mifflin Paper Co. / Schrute Farms / Michael Scott Paper Co.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Theme Custom Properties & Design Tokens
+   -------------------------------------------------------------------------- */
+:root, [data-theme="theme-light"] {
+  --sc-bg: #ffffff;
+  --sc-bg-subtle: #f4f5f7;
+  --sc-bg-panel: #ffffff;
+  --sc-bg-header: #e2e8f0;
+  --sc-bg-hover: #e2e8f0;
+  --sc-bg-active: #cbd5e1;
+  --sc-bg-selected: #bfdbfe;
+  
+  --sc-text: #0f172a;
+  --sc-text-muted: #475569;
+  --sc-text-dim: #64748b;
+  --sc-text-inverse: #ffffff;
+  
+  --sc-border: #cbd5e1;
+  --sc-border-dark: #94a3b8;
+  --sc-border-focus: #1e40af;
+
+  --sc-primary: #1e3a8a;       /* Dunder Mifflin Corporate Blue */
+  --sc-primary-hover: #1d4ed8;
+  --sc-primary-fg: #ffffff;
+  
+  --sc-secondary: #475569;     /* Warehouse Slate */
+  --sc-secondary-hover: #334155;
+  --sc-secondary-fg: #ffffff;
+
+  --sc-accent: #0284c7;        /* Paper Ream Blue */
+  --sc-accent-hover: #0369a1;
+  
+  --sc-success: #15803d;       /* Approved Sale Green */
+  --sc-warning: #b45309;       /* Stapler Warning Amber */
+  --sc-danger: #b91c1c;        /* Threat Level Midnight Red */
+  
+  --sc-beet: #4a0e17;          /* Schrute Beet Red */
+  --sc-mustard: #d97706;       /* Dwight Shirt Yellow */
+
+  --sc-font-mono: 'Consolas', 'Fira Code', 'Monaco', 'Courier New', monospace;
+  --sc-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --sc-font-size: 12px;
+  --sc-line-height: 1.35;
+  
+  --sc-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --sc-shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+
+  --sc-radius: 0px; /* Enforce sterile sharp edges */
+}
+
+[data-theme="theme-dark"] {
+  --sc-bg: #0b0f19;
+  --sc-bg-subtle: #111827;
+  --sc-bg-panel: #161e2e;
+  --sc-bg-header: #1f293d;
+  --sc-bg-hover: #26334d;
+  --sc-bg-active: #374151;
+  --sc-bg-selected: #1e3a8a;
+  
+  --sc-text: #f1f5f9;
+  --sc-text-muted: #94a3b8;
+  --sc-text-dim: #64748b;
+  --sc-text-inverse: #0f172a;
+  
+  --sc-border: #26334d;
+  --sc-border-dark: #475569;
+  --sc-border-focus: #3b82f6;
+
+  --sc-primary: #3b82f6;
+  --sc-primary-hover: #60a5fa;
+  --sc-primary-fg: #0f172a;
+  
+  --sc-secondary: #64748b;
+  --sc-secondary-hover: #94a3b8;
+  --sc-secondary-fg: #ffffff;
+
+  --sc-accent: #38bdf8;
+  --sc-accent-hover: #7dd3fc;
+  
+  --sc-success: #22c55e;
+  --sc-warning: #f59e0b;
+  --sc-danger: #ef4444;
+
+  --sc-beet: #9f1239;
+  --sc-mustard: #f59e0b;
+}
+
+[data-theme="theme-beet"] {
+  --sc-bg: #1c0509;
+  --sc-bg-subtle: #2b0b12;
+  --sc-bg-panel: #3a1019;
+  --sc-bg-header: #4a0e17;
+  --sc-bg-hover: #621321;
+  --sc-bg-active: #7f192b;
+  --sc-bg-selected: #b45309;
+  
+  --sc-text: #fffbeb;
+  --sc-text-muted: #fde68a;
+  --sc-text-dim: #d97706;
+  --sc-text-inverse: #1c0509;
+  
+  --sc-border: #621321;
+  --sc-border-dark: #b45309;
+  --sc-border-focus: #fbbf24;
+
+  --sc-primary: #d97706;       /* Dwight Mustard Yellow */
+  --sc-primary-hover: #f59e0b;
+  --sc-primary-fg: #1c0509;
+  
+  --sc-secondary: #800020;     /* Deep Beet Purple */
+  --sc-secondary-hover: #9f1239;
+  --sc-secondary-fg: #ffffff;
+
+  --sc-accent: #fbbf24;
+  --sc-accent-hover: #fcd34d;
+  
+  --sc-success: #16a34a;       /* Fresh Farm Greens */
+  --sc-warning: #ea580c;
+  --sc-danger: #dc2626;        /* Code Beet Red */
+
+  --sc-beet: #800020;
+  --sc-mustard: #d97706;
+}
+
+/* --------------------------------------------------------------------------
+   2. Reset & High-Density Typography Baseline
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--sc-radius) !important;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--sc-bg);
+  color: var(--sc-text);
+  font-family: var(--sc-font-sans);
+  font-size: var(--sc-font-size);
+  line-height: var(--sc-line-height);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+code, pre, kbd, samp, .font-mono, .sc-tabular {
+  font-family: var(--sc-font-mono);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Dense Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--sc-bg-subtle);
+  border: 1px solid var(--sc-border);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--sc-border-dark);
+  border: 1px solid var(--sc-bg-subtle);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sc-text-muted);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--sc-text);
+  line-height: 1.2;
+}
+
+h1 { font-size: 1.4rem; }
+h2 { font-size: 1.2rem; }
+h3 { font-size: 1.05rem; }
+h4 { font-size: 0.95rem; }
+h5 { font-size: 0.85rem; }
+h6 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+p { margin-bottom: 0.5rem; }
+a { color: var(--sc-accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--sc-border);
+  margin: 0.5rem 0;
+}
+
+/* --------------------------------------------------------------------------
+   3. Layout Primitives (Panes, Splitters, Windows, Docking)
+   -------------------------------------------------------------------------- */
+.sc-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.sc-header {
+  height: 36px;
+  background-color: var(--sc-bg-header);
+  border-bottom: 1px solid var(--sc-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.sc-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--sc-text);
+}
+
+.sc-header-brand .sc-logo-icon {
+  width: 16px;
+  height: 16px;
+  background: var(--sc-primary);
+  color: var(--sc-primary-fg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.sc-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.sc-sidebar {
+  width: 220px;
+  background-color: var(--sc-bg-subtle);
+  border-right: 1px solid var(--sc-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.sc-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: var(--sc-bg);
+  position: relative;
+}
+
+.sc-footer, .sc-statusbar {
+  height: 24px;
+  background-color: var(--sc-bg-header);
+  border-top: 1px solid var(--sc-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  font-size: 11px;
+  color: var(--sc-text-muted);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.sc-statusbar-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+  border-right: 1px solid var(--sc-border);
+  height: 100%;
+}
+.sc-statusbar-item:last-child {
+  border-right: none;
+}
+
+/* Diagnostic Split Panes */
+.sc-pane-group {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sc-pane-group-vertical {
+  flex-direction: column;
+}
+
+.sc-pane {
+  flex: 1;
+  background-color: var(--sc-bg-panel);
+  border: 1px solid var(--sc-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.sc-pane-header {
+  height: 28px;
+  background: var(--sc-bg-subtle);
+  border-bottom: 1px solid var(--sc-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sc-text-muted);
+}
+
+.sc-pane-body {
+  flex: 1;
+  padding: 8px;
+  overflow: auto;
+}
+
+.sc-pane-body-nopad {
+  flex: 1;
+  padding: 0;
+  overflow: auto;
+}
+
+/* Window Containers */
+.sc-window {
+  background: var(--sc-bg-panel);
+  border: 1px solid var(--sc-border-dark);
+  box-shadow: var(--sc-shadow-md);
+  display: flex;
+  flex-direction: column;
+}
+
+.sc-window-titlebar {
+  height: 26px;
+  background: var(--sc-primary);
+  color: var(--sc-primary-fg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  font-weight: 700;
+  font-size: 11px;
+  user-select: none;
+}
+
+.sc-window-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.sc-window-btn {
+  width: 16px;
+  height: 16px;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  border: none;
+  font-size: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.sc-window-btn:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+/* --------------------------------------------------------------------------
+   4. Grid System (12 Columns & Flex Utilities)
+   -------------------------------------------------------------------------- */
+.sc-container {
+  width: 100%;
+  padding: 8px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.sc-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -4px;
+  margin-left: -4px;
+}
+
+.sc-row > [class*="sc-col"] {
+  padding-right: 4px;
+  padding-left: 4px;
+  box-sizing: border-box;
+}
+
+.sc-col { flex-basis: 0; flex-grow: 1; max-width: 100%; }
+.sc-col-auto { flex: 0 0 auto; width: auto; max-width: 100%; }
+
+.sc-col-1 { flex: 0 0 8.333333%; max-width: 8.333333%; }
+.sc-col-2 { flex: 0 0 16.666667%; max-width: 16.666667%; }
+.sc-col-3 { flex: 0 0 25%; max-width: 25%; }
+.sc-col-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+.sc-col-5 { flex: 0 0 41.666667%; max-width: 41.666667%; }
+.sc-col-6 { flex: 0 0 50%; max-width: 50%; }
+.sc-col-7 { flex: 0 0 58.333333%; max-width: 58.333333%; }
+.sc-col-8 { flex: 0 0 66.666667%; max-width: 66.666667%; }
+.sc-col-9 { flex: 0 0 75%; max-width: 75%; }
+.sc-col-10 { flex: 0 0 83.333333%; max-width: 83.333333%; }
+.sc-col-11 { flex: 0 0 91.666667%; max-width: 91.666667%; }
+.sc-col-12 { flex: 0 0 100%; max-width: 100%; }
+
+@media (max-width: 768px) {
+  .sc-col-md-6 { flex: 0 0 50%; max-width: 50%; }
+  .sc-col-md-12 { flex: 0 0 100%; max-width: 100%; }
+}
+
+/* --------------------------------------------------------------------------
+   5. Dense Form Controls (Inputs, Selects, Checkboxes, Switches)
+   -------------------------------------------------------------------------- */
+.sc-form-group {
+  margin-bottom: 8px;
+}
+
+.sc-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--sc-text-muted);
+  margin-bottom: 2px;
+}
+
+.sc-input, .sc-select, .sc-textarea {
+  width: 100%;
+  height: 26px;
+  padding: 2px 6px;
+  font-family: var(--sc-font-sans);
+  font-size: 12px;
+  color: var(--sc-text);
+  background-color: var(--sc-bg-panel);
+  border: 1px solid var(--sc-border-dark);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.sc-textarea {
+  height: auto;
+  min-height: 60px;
+  padding: 4px 6px;
+  resize: vertical;
+}
+
+.sc-input:focus, .sc-select:focus, .sc-textarea:focus {
+  border-color: var(--sc-border-focus);
+  box-shadow: 0 0 0 1px var(--sc-border-focus);
+}
+
+.sc-input:disabled, .sc-select:disabled, .sc-textarea:disabled {
+  background-color: var(--sc-bg-subtle);
+  color: var(--sc-text-dim);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.sc-input-group {
+  display: flex;
+  width: 100%;
+}
+
+.sc-input-group > .sc-input,
+.sc-input-group > .sc-select,
+.sc-input-group > .sc-btn {
+  border-right-width: 0;
+}
+.sc-input-group > *:last-child {
+  border-right-width: 1px;
+}
+
+.sc-input-addon {
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sc-text-muted);
+  background-color: var(--sc-bg-subtle);
+  border: 1px solid var(--sc-border-dark);
+  border-right-width: 0;
+  white-space: nowrap;
+}
+
+/* Compact Checkbox & Radio */
+.sc-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  margin-right: 12px;
+}
+
+.sc-check input[type="checkbox"],
+.sc-check input[type="radio"] {
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--sc-border-dark);
+  background: var(--sc-bg-panel);
+  outline: none;
+  position: relative;
+  cursor: pointer;
+}
+
+.sc-check input[type="checkbox"]:checked {
+  background: var(--sc-primary);
+  border-color: var(--sc-primary);
+}
+.sc-check input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: -2px;
+  left: 1px;
+  font-size: 10px;
+  color: var(--sc-primary-fg);
+  font-weight: bold;
+}
+
+.sc-check input[type="radio"] {
+  border-radius: 0 !important; /* Enforce 0px radius rule */
+}
+.sc-check input[type="radio"]:checked {
+  background: var(--sc-primary);
+}
+
+/* Compact Toggle Switch */
+.sc-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+.sc-switch input { display: none; }
+.sc-switch-slider {
+  width: 28px;
+  height: 14px;
+  background-color: var(--sc-border-dark);
+  position: relative;
+  transition: background-color 0.2s;
+}
+.sc-switch-slider::before {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  left: 2px;
+  top: 2px;
+  background-color: #ffffff;
+  transition: transform 0.2s;
+}
+.sc-switch input:checked + .sc-switch-slider {
+  background-color: var(--sc-primary);
+}
+.sc-switch input:checked + .sc-switch-slider::before {
+  transform: translateX(14px);
+}
+
+/* --------------------------------------------------------------------------
+   6. Buttons & Button Groups
+   -------------------------------------------------------------------------- */
+.sc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 8px;
+  font-family: var(--sc-font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sc-text);
+  background-color: var(--sc-bg-subtle);
+  border: 1px solid var(--sc-border-dark);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sc-btn:hover {
+  background-color: var(--sc-bg-hover);
+}
+.sc-btn:active {
+  background-color: var(--sc-bg-active);
+}
+
+.sc-btn-sm { height: 20px; padding: 0 5px; font-size: 10px; }
+.sc-btn-lg { height: 32px; padding: 0 12px; font-size: 12px; }
+
+.sc-btn-primary {
+  background-color: var(--sc-primary);
+  color: var(--sc-primary-fg);
+  border-color: var(--sc-primary);
+}
+.sc-btn-primary:hover {
+  background-color: var(--sc-primary-hover);
+}
+
+.sc-btn-secondary {
+  background-color: var(--sc-secondary);
+  color: var(--sc-secondary-fg);
+  border-color: var(--sc-secondary);
+}
+.sc-btn-secondary:hover {
+  background-color: var(--sc-secondary-hover);
+}
+
+.sc-btn-success { background-color: var(--sc-success); color: #fff; border-color: var(--sc-success); }
+.sc-btn-warning { background-color: var(--sc-warning); color: #fff; border-color: var(--sc-warning); }
+.sc-btn-danger  { background-color: var(--sc-danger);  color: #fff; border-color: var(--sc-danger);  }
+.sc-btn-beet    { background-color: var(--sc-beet);    color: #fff; border-color: var(--sc-beet);    }
+.sc-btn-mustard { background-color: var(--sc-mustard); color: #000; border-color: var(--sc-mustard); }
+
+.sc-btn-group {
+  display: inline-flex;
+}
+.sc-btn-group > .sc-btn {
+  border-right-width: 0;
+}
+.sc-btn-group > .sc-btn:last-child {
+  border-right-width: 1px;
+}
+.sc-btn-group > .sc-btn.active {
+  background-color: var(--sc-bg-active);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* --------------------------------------------------------------------------
+   7. Tables & High Density Data Grids
+   -------------------------------------------------------------------------- */
+.sc-table-container {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--sc-border);
+}
+
+.sc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  text-align: left;
+}
+
+.sc-table th {
+  background-color: var(--sc-bg-header);
+  color: var(--sc-text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--sc-border-dark);
+  border-right: 1px solid var(--sc-border);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  user-select: none;
+}
+
+.sc-table td {
+  padding: 3px 6px;
+  border-bottom: 1px solid var(--sc-border);
+  border-right: 1px solid var(--sc-border);
+  color: var(--sc-text);
+  white-space: nowrap;
+}
+
+.sc-table th:last-child, .sc-table td:last-child {
+  border-right: none;
+}
+
+.sc-table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--sc-bg-subtle);
+}
+
+.sc-table-hover tbody tr:hover {
+  background-color: var(--sc-bg-hover);
+  cursor: pointer;
+}
+
+.sc-table-compact td { padding: 1px 4px; font-size: 10.5px; }
+
+.sc-table tr.selected {
+  background-color: var(--sc-bg-selected) !important;
+  color: var(--sc-text);
+}
+
+/* Sort Arrows */
+.sc-sort-icon {
+  display: inline-block;
+  margin-left: 4px;
+  opacity: 0.6;
+}
+
+/* --------------------------------------------------------------------------
+   8. Navigation, Tabs & Breadcrumbs
+   -------------------------------------------------------------------------- */
+.sc-nav {
+  display: flex;
+  list-style: none;
+  background-color: var(--sc-bg-subtle);
+  border-bottom: 1px solid var(--sc-border);
+}
+
+.sc-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sc-text-muted);
+  border-right: 1px solid var(--sc-border);
+  text-decoration: none;
+  user-select: none;
+}
+.sc-nav-link:hover {
+  background-color: var(--sc-bg-hover);
+  color: var(--sc-text);
+  text-decoration: none;
+}
+.sc-nav-link.active {
+  background-color: var(--sc-bg-panel);
+  color: var(--sc-primary);
+  border-bottom: 2px solid var(--sc-primary);
+}
+
+.sc-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  font-size: 11px;
+  color: var(--sc-text-dim);
+  padding: 4px 8px;
+  background: var(--sc-bg-subtle);
+  border-bottom: 1px solid var(--sc-border);
+}
+.sc-breadcrumbs li::after {
+  content: "/";
+  margin-left: 4px;
+  color: var(--sc-text-dim);
+}
+.sc-breadcrumbs li:last-child::after {
+  content: "";
+}
+.sc-breadcrumbs a {
+  color: var(--sc-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   9. Badges, Pills & Status LED Indicators
+   -------------------------------------------------------------------------- */
+.sc-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 4px;
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: var(--sc-bg-subtle);
+  color: var(--sc-text);
+  border: 1px solid var(--sc-border-dark);
+  line-height: 1;
+}
+
+.sc-badge-primary { background: var(--sc-primary); color: var(--sc-primary-fg); border-color: var(--sc-primary); }
+.sc-badge-success { background: var(--sc-success); color: #ffffff; border-color: var(--sc-success); }
+.sc-badge-warning { background: var(--sc-warning); color: #ffffff; border-color: var(--sc-warning); }
+.sc-badge-danger  { background: var(--sc-danger);  color: #ffffff; border-color: var(--sc-danger);  }
+.sc-badge-beet    { background: var(--sc-beet);    color: #ffffff; border-color: var(--sc-beet);    }
+
+/* Pulsing Diagnostic Status LEDs */
+.sc-led {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--sc-text-dim);
+  border: 1px solid rgba(0,0,0,0.3);
+}
+
+.sc-led-green  { background-color: #22c55e; box-shadow: 0 0 4px #22c55e; }
+.sc-led-red    { background-color: #ef4444; box-shadow: 0 0 4px #ef4444; }
+.sc-led-yellow { background-color: #f59e0b; box-shadow: 0 0 4px #f59e0b; }
+.sc-led-blue   { background-color: #3b82f6; box-shadow: 0 0 4px #3b82f6; }
+
+.sc-led-blink {
+  animation: sc-led-pulse 1s infinite alternate;
+}
+
+@keyframes sc-led-pulse {
+  from { opacity: 1.0; }
+  to   { opacity: 0.3; }
+}
+
+/* --------------------------------------------------------------------------
+   10. Alerts, Callouts & Toast Banners
+   -------------------------------------------------------------------------- */
+.sc-alert {
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  font-size: 11.5px;
+  background-color: var(--sc-bg-subtle);
+  border: 1px solid var(--sc-border-dark);
+  border-left-width: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sc-alert-info    { border-left-color: var(--sc-accent);   background-color: rgba(2, 132, 199, 0.08); }
+.sc-alert-success { border-left-color: var(--sc-success);  background-color: rgba(21, 128, 61, 0.08); }
+.sc-alert-warning { border-left-color: var(--sc-warning);  background-color: rgba(180, 83, 9, 0.08); }
+.sc-alert-danger  { border-left-color: var(--sc-danger);   background-color: rgba(185, 28, 28, 0.08); }
+.sc-alert-beet    { border-left-color: var(--sc-beet);     background-color: rgba(74, 14, 23, 0.15); }
+
+/* --------------------------------------------------------------------------
+   11. Cards, Tree Views & Diagnostic Containers
+   -------------------------------------------------------------------------- */
+.sc-card {
+  background-color: var(--sc-bg-panel);
+  border: 1px solid var(--sc-border);
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.sc-card-header {
+  padding: 5px 8px;
+  background-color: var(--sc-bg-subtle);
+  border-bottom: 1px solid var(--sc-border);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sc-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sc-card-body {
+  padding: 8px;
+  flex: 1;
+}
+
+.sc-card-footer {
+  padding: 4px 8px;
+  background-color: var(--sc-bg-subtle);
+  border-top: 1px solid var(--sc-border);
+  font-size: 10.5px;
+  color: var(--sc-text-dim);
+}
+
+/* High Density Tree View */
+.sc-tree {
+  list-style: none;
+  font-size: 11.5px;
+  user-select: none;
+}
+.sc-tree li {
+  position: relative;
+  padding-left: 14px;
+  line-height: 1.8;
+}
+.sc-tree li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 10px;
+  width: 6px;
+  height: 1px;
+  background: var(--sc-border-dark);
+}
+.sc-tree li::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--sc-border-dark);
+}
+.sc-tree li:last-child::after {
+  height: 10px;
+}
+.sc-tree-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 4px;
+  cursor: pointer;
+}
+.sc-tree-node:hover {
+  background-color: var(--sc-bg-hover);
+}
+.sc-tree-node.active {
+  background-color: var(--sc-primary);
+  color: var(--sc-primary-fg);
+}
+
+/* --------------------------------------------------------------------------
+   12. Progress Bars, Gauges & Meter Indicators
+   -------------------------------------------------------------------------- */
+.sc-progress {
+  height: 12px;
+  width: 100%;
+  background-color: var(--sc-bg-subtle);
+  border: 1px solid var(--sc-border-dark);
+  overflow: hidden;
+  position: relative;
+}
+
+.sc-progress-bar {
+  height: 100%;
+  background-color: var(--sc-primary);
+  transition: width 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: bold;
+  color: var(--sc-primary-fg);
+}
+
+.sc-progress-bar-success { background-color: var(--sc-success); }
+.sc-progress-bar-warning { background-color: var(--sc-warning); }
+.sc-progress-bar-danger  { background-color: var(--sc-danger); }
+.sc-progress-bar-beet    { background-color: var(--sc-beet); }
+
+/* Meter gauge */
+.sc-meter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.sc-meter-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--sc-bg-subtle);
+  border: 1px solid var(--sc-border);
+}
+.sc-meter-fill {
+  height: 100%;
+  background: var(--sc-accent);
+}
+
+/* --------------------------------------------------------------------------
+   13. Desktop OS Tools Grid Primitives
+   -------------------------------------------------------------------------- */
+.sc-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 6px;
+  padding: 8px;
+}
+
+.sc-tool-tile {
+  background: var(--sc-bg-panel);
+  border: 1px solid var(--sc-border);
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.1s, border-color 0.1s;
+}
+
+.sc-tool-tile:hover {
+  background: var(--sc-bg-hover);
+  border-color: var(--sc-border-dark);
+}
+
+.sc-tool-tile.active, .sc-tool-tile:active {
+  background: var(--sc-bg-selected);
+  border-color: var(--sc-primary);
+}
+
+.sc-tool-icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.sc-tool-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sc-text);
+  line-height: 1.2;
+}
+
+.sc-tool-badge {
+  font-size: 9px;
+  color: var(--sc-text-dim);
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   14. Micro-Utility Classes (Bootstrap Parity)
+   -------------------------------------------------------------------------- */
+/* Display */
+.d-block { display: block !important; }
+.d-inline { display: inline !important; }
+.d-inline-block { display: inline-block !important; }
+.d-flex { display: flex !important; }
+.d-inline-flex { display: inline-flex !important; }
+.d-grid { display: grid !important; }
+.d-none { display: none !important; }
+
+/* Flex alignment */
+.flex-row { flex-direction: row !important; }
+.flex-column { flex-direction: column !important; }
+.justify-start { justify-content: flex-start !important; }
+.justify-end { justify-content: flex-end !important; }
+.justify-center { justify-content: center !important; }
+.justify-between { justify-content: space-between !important; }
+.align-start { align-items: flex-start !important; }
+.align-end { align-items: flex-end !important; }
+.align-center { align-items: center !important; }
+.flex-grow-1 { flex-grow: 1 !important; }
+
+/* Spacing (0, 1=2px, 2=4px, 3=8px, 4=12px, 5=16px) */
+.m-0 { margin: 0 !important; }
+.m-1 { margin: 2px !important; }
+.m-2 { margin: 4px !important; }
+.m-3 { margin: 8px !important; }
+.m-4 { margin: 12px !important; }
+
+.mt-1 { margin-top: 2px !important; }
+.mt-2 { margin-top: 4px !important; }
+.mt-3 { margin-top: 8px !important; }
+.mt-4 { margin-top: 12px !important; }
+
+.mb-1 { margin-bottom: 2px !important; }
+.mb-2 { margin-bottom: 4px !important; }
+.mb-3 { margin-bottom: 8px !important; }
+.mb-4 { margin-bottom: 12px !important; }
+
+.p-0 { padding: 0 !important; }
+.p-1 { padding: 2px !important; }
+.p-2 { padding: 4px !important; }
+.p-3 { padding: 8px !important; }
+.p-4 { padding: 12px !important; }
+
+.gap-1 { gap: 2px !important; }
+.gap-2 { gap: 4px !important; }
+.gap-3 { gap: 8px !important; }
+.gap-4 { gap: 12px !important; }
+
+/* Text Alignment & Color */
+.text-left { text-align: left !important; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+
+.text-primary { color: var(--sc-primary) !important; }
+.text-muted   { color: var(--sc-text-muted) !important; }
+.text-dim     { color: var(--sc-text-dim) !important; }
+.text-success { color: var(--sc-success) !important; }
+.text-warning { color: var(--sc-warning) !important; }
+.text-danger  { color: var(--sc-danger) !important; }
+.text-beet    { color: var(--sc-beet) !important; }
+.text-mustard { color: var(--sc-mustard) !important; }
+
+.fw-normal { font-weight: 400 !important; }
+.fw-bold { font-weight: 700 !important; }
+.fw-heavy { font-weight: 900 !important; }
+
+/* Width/Height */
+.w-100 { width: 100% !important; }
+.h-100 { height: 100% !important; }
+
+/* Border utilities */
+.border { border: 1px solid var(--sc-border) !important; }
+.border-top { border-top: 1px solid var(--sc-border) !important; }
+.border-bottom { border-bottom: 1px solid var(--sc-border) !important; }
+.border-left { border-left: 1px solid var(--sc-border) !important; }
+.border-right { border-right: 1px solid var(--sc-border) !important; }
+.border-0 { border: 0 !important; }
+
+/* Ticker & Pulse Effects */
+.sc-tick-up { background-color: rgba(34, 197, 94, 0.25) !important; color: var(--sc-success); }
+.sc-tick-down { background-color: rgba(239, 68, 68, 0.25) !important; color: var(--sc-danger); }

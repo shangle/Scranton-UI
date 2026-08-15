@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="theme-light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dwight's Security & OS Tools Grid — Scranton-UI Showcase</title>
+  <link rel="stylesheet" href="scranton-ui.css">
+  <script src="scranton-components.js" defer></script>
+</head>
+<body class="sc-app">
+
+  <!-- Header -->
+  <header class="sc-header">
+    <div class="sc-header-brand">
+      <span class="sc-logo-icon" style="background:var(--sc-beet); color:#fff;">DS</span>
+      <span>SCHRUTE SECURITY & DESKTOP TOOLS GRID <small class="text-dim">(Level 5 Security Clearance)</small></span>
+    </div>
+    
+    <div class="d-flex align-center gap-3">
+      <nav class="d-flex gap-2">
+        <a href="index.html" class="sc-btn sc-btn-sm">← Docs Hub</a>
+        <a href="dashboard.html" class="sc-btn sc-btn-sm">1. Enterprise Sales</a>
+        <a href="tools.html" class="sc-btn sc-btn-sm sc-btn-beet">2. Dwight Tools</a>
+        <a href="control-panel.html" class="sc-btn sc-btn-sm">3. Toby HR</a>
+        <a href="terminal.html" class="sc-btn sc-btn-sm">4. Trading Terminal</a>
+        <a href="workflow.html" class="sc-btn sc-btn-sm">5. Command Tree</a>
+      </nav>
+      <scranton-theme-switcher></scranton-theme-switcher>
+    </div>
+  </header>
+
+  <!-- Main Body Layout -->
+  <div class="sc-body p-2" style="flex-direction:column; gap:8px;">
+    
+    <!-- Top Bar Threat Status -->
+    <div class="sc-alert sc-alert-beet">
+      <div class="d-flex align-center gap-2">
+        <span class="sc-led sc-led-red sc-led-blink"></span>
+        <strong>THREAT LEVEL MIDNIGHT RADAR:</strong> Code Beet Active. Recyclops Threat Level 4 in Scranton Area.
+      </div>
+      <div class="d-flex gap-2">
+        <button class="sc-btn sc-btn-sm sc-btn-mustard" onclick="scrantonToast('Code Beet Override Dispatched to Mose!', 'warning')">Trigger Code Beet</button>
+        <button class="sc-btn sc-btn-sm sc-btn-danger" onclick="document.getElementById('weapons-modal').open()">Weapons Stash Map</button>
+      </div>
+    </div>
+
+    <!-- Main Grid and Tools Pane -->
+    <div class="sc-row" style="flex:1;">
+      
+      <!-- OS Tools Grid Pane -->
+      <div class="sc-col-8">
+        <div class="sc-pane h-100">
+          <div class="sc-pane-header">
+            <span>Dwight Schrute's Desktop Diagnostic Utility Grid</span>
+            <span class="sc-badge sc-badge-beet">32 Shortcuts Active</span>
+          </div>
+          <div class="sc-pane-body-nopad">
+            
+            <div class="sc-tools-grid">
+              
+              <div class="sc-tool-tile" onclick="scrantonToast('Pepper Spray System: Armed', 'danger')">
+                <div class="sc-tool-icon">🌶️</div>
+                <div class="sc-tool-name">Desk Pepper Spray</div>
+                <div class="sc-tool-badge">Armed (Jim Shield)</div>
+              </div>
+
+              <div class="sc-tool-tile" onclick="scrantonToast('Camo Netting Deployed over Pam Desk', 'info')">
+                <div class="sc-tool-icon">🕸️</div>
+                <div class="sc-tool-name">Tactical Camo</div>
+                <div class="sc-tool-badge">Active (Ceiling)</div>
+              </div>
+
+              <div class="sc-tool-tile" onclick="scrantonToast('Surveillance Cam #3 (Kitchen): Clear', 'success')">
+                <div class="sc-tool-icon">📹</div>
+                <div class="sc-tool-name">Kitchen Cam Feed</div>
+                <div class="sc-tool-badge">1080p 60FPS</div>
+              </div>
+
+              <div class="sc-tool-tile" onclick="scrantonToast('Stapler gelatin removal unit online', 'warning')">
+                <div class="sc-tool-icon">🍮</div>
+                <div class="sc-tool-name">Jell-O Dissolver</div>
+                <div class="sc-tool-badge">Acid Tank Ready</div>
+              </div>
+
+              <div class="sc-tool-tile" onclick="scrantonToast('Beet Harvesting Radar: 100% Yield', 'success')">
+                <div class="sc-tool-icon">🍠</div>
+                <div class="sc-tool-name">Beet Crop Radar</div>
+                <div class="sc-tool-badge">Schrute Farms</div>
+              </div>
+
+              <div class="sc-tool-tile" onclick="scrantonToast('Recyclops Defense Matrix: Operational', 'danger')">
+                <div class="sc-tool-icon">🤖</div>
+                <div class="sc-tool-name">Recyclops Shield</div>
+                <div class="sc-tool-badge">Level 4 Defense</div>
+              </div>
+
+              <div class="sc-tool-tile" onclick="scrantonToast('Mose Radio Channel 4 Connected', 'info')">
+                <div class="sc-tool-icon">📻</div>
+                <div class="sc-tool-name">Mose Walkie-Talkie</div>
+                <div class="sc-tool-badge">Farm Frequency</div>
+              </div>
+
+              <div class="sc-tool-tile" onclick="scrantonToast('Fire Safety Drill Simulator Launched!', 'danger')">
+                <div class="sc-tool-icon">🔥</div>
+                <div class="sc-tool-name">Fire Drill Sim</div>
+                <div class="sc-tool-badge">Today Danger</div>
+              </div>
+
+              <div class="sc-tool-tile" onclick="scrantonToast('Nunchuck Stash: Ceiling Tile #4', 'warning')">
+                <div class="sc-tool-icon">🥋</div>
+                <div class="sc-tool-name">Nunchuck Locator</div>
+                <div class="sc-tool-badge">Ceiling Grid</div>
+              </div>
+
+              <div class="sc-tool-tile" onclick="scrantonToast('Battlestar Galactica Trivia Database Ready', 'info')">
+                <div class="sc-tool-icon">🚀</div>
+                <div class="sc-tool-name">BSG Database</div>
+                <div class="sc-tool-badge">Viper Pilot Docs</div>
+              </div>
+
+              <div class="sc-tool-tile" onclick="scrantonToast('Vance Refrigeration Intercept Active', 'info')">
+                <div class="sc-tool-icon">❄️</div>
+                <div class="sc-tool-name">Vance Intercept</div>
+                <div class="sc-tool-badge">Phyllis Comm</div>
+              </div>
+
+              <div class="sc-tool-tile" onclick="scrantonToast('Megadesk Configuration Unit Locked', 'success')">
+                <div class="sc-tool-icon">🖥️</div>
+                <div class="sc-tool-name">Megadesk Controls</div>
+                <div class="sc-tool-badge">Quad Monitor</div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Hidden Weapons & Office Security Index -->
+      <div class="sc-col-4">
+        <div class="sc-pane h-100">
+          <div class="sc-pane-header">
+            <span>Hidden Office Weapons Inventory</span>
+            <span class="sc-badge sc-badge-danger">CLASSIFIED</span>
+          </div>
+          <div class="sc-pane-body-nopad">
+            <table class="sc-table sc-table-striped">
+              <thead>
+                <tr>
+                  <th>Weapon Type</th>
+                  <th>Hiding Spot</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="fw-bold">Hidden Pepper Spray</td>
+                  <td>Under Desk Drawer #2</td>
+                  <td><span class="sc-badge sc-badge-success">ARMED</span></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Wooden Nunchucks</td>
+                  <td>Ceiling Tile above Angela</td>
+                  <td><span class="sc-badge sc-badge-success">READY</span></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Throwing Stars (Shuriken)</td>
+                  <td>Inside Copy Machine Tray B</td>
+                  <td><span class="sc-badge sc-badge-warning">RESTOCK</span></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Sammurai Sword</td>
+                  <td>Behind File Cabinet #4</td>
+                  <td><span class="sc-badge sc-badge-beet">SCHRUTE</span></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Crossbow & Arrows</td>
+                  <td>Warehouse Shelving B-12</td>
+                  <td><span class="sc-badge sc-badge-danger">SECURED</span></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Bear Mace (Extra Large)</td>
+                  <td>Receptor Box behind TV</td>
+                  <td><span class="sc-badge sc-badge-success">READY</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Statusbar -->
+  <footer class="sc-statusbar">
+    <div class="d-flex align-center">
+      <div class="sc-statusbar-item"><span class="sc-led sc-led-green"></span> Security Guard: Dwight K. Schrute</div>
+      <div class="sc-statusbar-item">Title: Assistant to the Regional Manager</div>
+    </div>
+    <div class="d-flex align-center">
+      <div class="sc-statusbar-item">Beet Crop Health: 99.8%</div>
+      <div class="sc-statusbar-item">Threat Level: Midnight</div>
+    </div>
+  </footer>
+
+  <!-- Weapons Stash Modal -->
+  <scranton-modal id="weapons-modal" title="Dwight Schrute Security Override Grid">
+    <div class="sc-alert sc-alert-danger">
+      <strong>RESTRICTED ACCESS:</strong> Authorization required by Assistant Regional Manager.
+    </div>
+    <p class="text-muted mb-2">
+      "Question: What is the most dangerous animal on Earth? Answer: Recyclops when he is angry."
+    </p>
+    <div class="sc-form-group">
+      <label class="sc-label">Security Passcode</label>
+      <input type="password" class="sc-input" value="BearsBeetsBattlestarGalactica">
+    </div>
+    <div class="d-flex justify-end gap-2 mt-3">
+      <button class="sc-btn" onclick="document.getElementById('weapons-modal').close()">Cancel</button>
+      <button class="sc-btn sc-btn-beet" onclick="scrantonToast('Passcode Accepted. Weapons Released.', 'success'); document.getElementById('weapons-modal').close();">Unlock Vault</button>
+    </div>
+  </scranton-modal>
+
+</body>
+</html>

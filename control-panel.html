@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="theme-light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toby's HR Complaint Logging System — Scranton-UI Showcase</title>
+  <link rel="stylesheet" href="scranton-ui.css">
+  <script src="scranton-components.js" defer></script>
+</head>
+<body class="sc-app">
+
+  <!-- Header -->
+  <header class="sc-header">
+    <div class="sc-header-brand">
+      <span class="sc-logo-icon" style="background:var(--sc-secondary); color:#fff;">HR</span>
+      <span>TOBY'S HR COMPLAINT LOGGING & SYSTEM CONFIG <small class="text-dim">(Corporate HR Dept)</small></span>
+    </div>
+    
+    <div class="d-flex align-center gap-3">
+      <nav class="d-flex gap-2">
+        <a href="index.html" class="sc-btn sc-btn-sm">← Docs Hub</a>
+        <a href="dashboard.html" class="sc-btn sc-btn-sm">1. Enterprise Sales</a>
+        <a href="tools.html" class="sc-btn sc-btn-sm">2. Dwight Tools</a>
+        <a href="control-panel.html" class="sc-btn sc-btn-sm sc-btn-secondary">3. Toby HR</a>
+        <a href="terminal.html" class="sc-btn sc-btn-sm">4. Trading Terminal</a>
+        <a href="workflow.html" class="sc-btn sc-btn-sm">5. Command Tree</a>
+      </nav>
+      <scranton-theme-switcher></scranton-theme-switcher>
+    </div>
+  </header>
+
+  <!-- Main Body Layout -->
+  <div class="sc-body">
+    
+    <!-- Left Category Navigation Sidebar -->
+    <aside class="sc-sidebar p-2" style="width:240px;">
+      <div class="sc-label mb-1">HR Categories</div>
+      <ul class="sc-tree mb-3">
+        <li>
+          <span class="sc-tree-node active">
+            📁 Active Prank Logs (Jim vs Dwight)
+          </span>
+        </li>
+        <li>
+          <span class="sc-tree-node">
+            📁 Michael Scott Incidents (1,402)
+          </span>
+        </li>
+        <li>
+          <span class="sc-tree-node">
+            📁 Microwave Hygiene Complaints
+          </span>
+        </li>
+        <li>
+          <span class="sc-tree-node">
+            📁 Party Planning Committee Disputes
+          </span>
+        </li>
+        <li>
+          <span class="sc-tree-node">
+            📁 Annex Noise Violations (Kelly/Ryan)
+          </span>
+        </li>
+      </ul>
+
+      <div class="sc-label mb-1">HR System Settings</div>
+      <ul class="sc-tree mb-3">
+        <li><span class="sc-tree-node">⚙️ Anonymity Protocols</span></li>
+        <li><span class="sc-tree-node">⚙️ Corporate Filing Automation</span></li>
+        <li><span class="sc-tree-node">⚙️ Toby Deprecation Filter</span></li>
+      </ul>
+
+      <div class="sc-card mt-auto p-2" style="background: var(--sc-bg-subtle);">
+        <div class="fw-bold mb-1 text-muted" style="font-size:10px;">TOBY'S NOTE</div>
+        <p class="text-muted" style="font-size:10px; margin:0;">
+          "I have to document every single complaint, even if Michael calls me the Anti-Christ."
+        </p>
+      </div>
+    </aside>
+
+    <!-- Main Content Area: Form & Log Settings -->
+    <main class="sc-main p-3">
+      
+      <!-- Top Alert -->
+      <div class="sc-alert sc-alert-warning mb-3">
+        <div>
+          <strong>CONFIDENTIAL HR PORTAL:</strong> Logged in as <em>Toby Flenderson (HR Representative)</em>. All submissions are forwarded directly to Corporate in New York.
+        </div>
+        <button class="sc-btn sc-btn-sm sc-btn-secondary" onclick="scrantonToast('Complaint Log Exported to PDF', 'info')">Export PDF Report</button>
+      </div>
+
+      <!-- Main Form Card -->
+      <div class="sc-card mb-3">
+        <div class="sc-card-header">
+          <span>File New Employee Incident Complaint</span>
+          <span class="sc-badge sc-badge-danger">HIGH PRIORITY</span>
+        </div>
+        <div class="sc-card-body">
+          
+          <div class="sc-row">
+            <div class="sc-col-6">
+              <div class="sc-form-group">
+                <label class="sc-label">Complainant (Victim)</label>
+                <select class="sc-select">
+                  <option selected>Dwight K. Schrute</option>
+                  <option>Jim Halpert</option>
+                  <option>Pam Beesly</option>
+                  <option>Angela Martin</option>
+                  <option>Kevin Malone</option>
+                  <option>Andy Bernard</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="sc-col-6">
+              <div class="sc-form-group">
+                <label class="sc-label">Offender (Accused Party)</label>
+                <select class="sc-select">
+                  <option selected>Jim Halpert (Prankster)</option>
+                  <option>Michael G. Scott (Regional Manager)</option>
+                  <option>Creed Bratton (Unknown)</option>
+                  <option>Ryan Howard (Temp)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="sc-row">
+            <div class="sc-col-4">
+              <div class="sc-form-group">
+                <label class="sc-label">Violation Category</label>
+                <select class="sc-select">
+                  <option>Personal Property Encapsulation (Jell-O)</option>
+                  <option>Desk Displacement (Moved into Bathroom)</option>
+                  <option>Inappropriate Nickname Usage</option>
+                  <option>Popcorn Odor in Microwave</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="sc-col-4">
+              <div class="sc-form-group">
+                <label class="sc-label">Severity Level</label>
+                <select class="sc-select">
+                  <option>Level 1 — Mild Annoyance</option>
+                  <option selected>Level 3 — Severe Workplace Prank</option>
+                  <option>Level 5 — Threat Level Midnight Emergency</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="sc-col-4">
+              <div class="sc-form-group">
+                <label class="sc-label">Escalation Status</label>
+                <div class="pt-1">
+                  <label class="sc-check">
+                    <input type="checkbox" checked> Send to David Wallace
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sc-form-group">
+            <label class="sc-label">Detailed Incident Narrative</label>
+            <textarea class="sc-textarea" style="min-height:80px;">"Today Jim wrapped my entire desk, keyboard, mouse, and desk chair in aluminum foil. When I sat down, the chair collapsed into a crumpled ball. Jim claims it was a gift from Santa."</textarea>
+          </div>
+
+          <div class="d-flex justify-between align-center mt-2">
+            <div class="d-flex align-center gap-3">
+              <label class="sc-switch">
+                <input type="checkbox" checked>
+                <span class="sc-switch-slider"></span>
+                <span>Flag for Counseling Session</span>
+              </label>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="sc-btn" onclick="scrantonToast('Form Reset', 'info')">Discard Draft</button>
+              <button class="sc-btn sc-btn-primary" onclick="scrantonToast('HR Incident Logged! Corporate Notified.', 'success')">Submit Complaint to Corporate</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Recent Complaint Ledger Table -->
+      <div class="sc-pane">
+        <div class="sc-pane-header">
+          <span>Historical Complaint Archive (Scranton Branch)</span>
+          <span class="sc-badge sc-badge-primary">Showing Last 5 Logs</span>
+        </div>
+        <div class="sc-pane-body-nopad">
+          <table class="sc-table sc-table-striped sc-table-hover">
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Complainant</th>
+                <th>Offender</th>
+                <th>Violation Summary</th>
+                <th>Date Logged</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="font-mono">HR-8801</td>
+                <td>Dwight Schrute</td>
+                <td>Jim Halpert</td>
+                <td>Desk replaced with cardboard replica</td>
+                <td>2026-08-12</td>
+                <td><span class="sc-badge sc-badge-warning">UNDER REVIEW</span></td>
+              </tr>
+              <tr>
+                <td class="font-mono">HR-8799</td>
+                <td>Pam Beesly</td>
+                <td>Michael Scott</td>
+                <td>Forced attendance at Dundie Awards practice</td>
+                <td>2026-08-10</td>
+                <td><span class="sc-badge sc-badge-success">RESOLVED</span></td>
+              </tr>
+              <tr>
+                <td class="font-mono">HR-8750</td>
+                <td>Angela Martin</td>
+                <td>Kevin Malone</td>
+                <td>Excessive breathing near accounting desk</td>
+                <td>2026-08-04</td>
+                <td><span class="sc-badge sc-badge-secondary">DISMISSED</span></td>
+              </tr>
+              <tr>
+                <td class="font-mono">HR-8692</td>
+                <td>Oscar Martinez</td>
+                <td>Michael Scott</td>
+                <td>Unsolicited financial advice regarding China</td>
+                <td>2026-07-28</td>
+                <td><span class="sc-badge sc-badge-danger">ESCALATED</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Statusbar -->
+  <footer class="sc-statusbar">
+    <div class="d-flex align-center">
+      <div class="sc-statusbar-item"><span class="sc-led sc-led-yellow"></span> HR Officer: Toby Flenderson</div>
+      <div class="sc-statusbar-item">Corporate Connection: New York Office</div>
+    </div>
+    <div class="d-flex align-center">
+      <div class="sc-statusbar-item">Total Complaints Filed: 4,891</div>
+      <div class="sc-statusbar-item">Michael Scott Sigh Count: ∞</div>
+    </div>
+  </footer>
+
+</body>
+</html>

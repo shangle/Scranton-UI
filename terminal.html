@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="theme-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Michael Scott Paper Company "Market Watch" — Scranton-UI Showcase</title>
+  <link rel="stylesheet" href="scranton-ui.css">
+  <script src="scranton-components.js" defer></script>
+  <style>
+    /* Custom High Density Terminal Adjustments */
+    .sc-table-terminal td, .sc-table-terminal th {
+      padding: 2px 4px;
+      font-size: 10.5px;
+      font-family: var(--sc-font-mono);
+    }
+  </style>
+</head>
+<body class="sc-app">
+
+  <!-- Header -->
+  <header class="sc-header">
+    <div class="sc-header-brand">
+      <span class="sc-logo-icon" style="background:var(--sc-warning); color:#000;">MS</span>
+      <span>MICHAEL SCOTT PAPER COMPANY — PAPER MARKET WATCH & TICKER <small class="text-warning">(Live Arbitrage Terminal)</small></span>
+    </div>
+    
+    <div class="d-flex align-center gap-3">
+      <nav class="d-flex gap-2">
+        <a href="index.html" class="sc-btn sc-btn-sm">← Docs Hub</a>
+        <a href="dashboard.html" class="sc-btn sc-btn-sm">1. Enterprise Sales</a>
+        <a href="tools.html" class="sc-btn sc-btn-sm">2. Dwight Tools</a>
+        <a href="control-panel.html" class="sc-btn sc-btn-sm">3. Toby HR</a>
+        <a href="terminal.html" class="sc-btn sc-btn-sm sc-btn-warning">4. Trading Terminal</a>
+        <a href="workflow.html" class="sc-btn sc-btn-sm">5. Command Tree</a>
+      </nav>
+      <scranton-theme-switcher></scranton-theme-switcher>
+    </div>
+  </header>
+
+  <!-- Zero Margin Interlocking Quadrant Layout -->
+  <div class="sc-body" style="padding:0; background:#000;">
+    
+    <div class="sc-pane-group">
+      
+      <!-- Left Column Quadrants -->
+      <div class="sc-pane-group sc-pane-group-vertical" style="flex: 1.2;">
+        
+        <!-- Q1: Watchlist & Live Ticker -->
+        <div class="sc-pane" style="border:1px solid #26334d;">
+          <div class="sc-pane-header">
+            <span>Paper Stock Watchlist & Live Bid/Ask</span>
+            <div class="d-flex align-center gap-2">
+              <span class="sc-led sc-led-green sc-led-blink"></span>
+              <span class="text-success" style="font-size:10px;">FEED ACTIVE</span>
+            </div>
+          </div>
+          <div class="sc-pane-body-nopad">
+            <table class="sc-table sc-table-striped sc-table-hover sc-table-terminal">
+              <thead>
+                <tr>
+                  <th>Ticker</th>
+                  <th>Company Name</th>
+                  <th>Bid ($)</th>
+                  <th>Ask ($)</th>
+                  <th>Chg %</th>
+                  <th>Volume</th>
+                  <th>Sparkline</th>
+                </tr>
+              </thead>
+              <tbody id="ticker-tbody">
+                <tr class="sc-tick-up">
+                  <td class="fw-bold text-warning">DMN</td>
+                  <td>Dunder Mifflin Inc.</td>
+                  <td class="font-mono" id="dmn-bid">48.20</td>
+                  <td class="font-mono" id="dmn-ask">48.25</td>
+                  <td class="text-success fw-bold">+4.12%</td>
+                  <td class="font-mono">1,489,000</td>
+                  <td><scranton-sparkline values="40,42,41,45,44,48" width="50" height="14" color="#22c55e"></scranton-sparkline></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold text-accent">MSPC</td>
+                  <td>Michael Scott Paper Co.</td>
+                  <td class="font-mono" id="mspc-bid">2.45</td>
+                  <td class="font-mono" id="mspc-ask">2.48</td>
+                  <td class="text-success fw-bold">+18.50%</td>
+                  <td class="font-mono">890,200</td>
+                  <td><scranton-sparkline values="1,1.2,1.5,1.8,2.1,2.48" width="50" height="14" color="#38bdf8"></scranton-sparkline></td>
+                </tr>
+                <tr class="sc-tick-down">
+                  <td class="fw-bold text-danger">PRNC</td>
+                  <td>Prince Family Paper</td>
+                  <td class="font-mono">12.10</td>
+                  <td class="font-mono">12.15</td>
+                  <td class="text-danger fw-bold">-14.20%</td>
+                  <td class="font-mono">42,000</td>
+                  <td><scranton-sparkline values="20,18,16,14,13,12.1" width="50" height="14" color="#ef4444"></scranton-sparkline></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold text-primary">VRFG</td>
+                  <td>Vance Refrigeration</td>
+                  <td class="font-mono">104.50</td>
+                  <td class="font-mono">104.80</td>
+                  <td class="text-success fw-bold">+0.85%</td>
+                  <td class="font-mono">310,000</td>
+                  <td><scranton-sparkline values="100,102,101,103,104,104.5" width="50" height="14" color="#3b82f6"></scranton-sparkline></td>
+                </tr>
+                <tr>
+                  <td class="fw-bold text-beet">SCHR</td>
+                  <td>Schrute Beet Agricultural</td>
+                  <td class="font-mono">88.40</td>
+                  <td class="font-mono">88.60</td>
+                  <td class="text-success fw-bold">+6.40%</td>
+                  <td class="font-mono">540,100</td>
+                  <td><scranton-sparkline values="75,80,82,85,86,88.4" width="50" height="14" color="#fbbf24"></scranton-sparkline></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Q2: Order Book Simulation -->
+        <div class="sc-pane" style="border:1px solid #26334d;">
+          <div class="sc-pane-header">
+            <span>Depth Order Book — MSPC Arbitrage</span>
+            <span class="sc-badge sc-badge-warning">VAN PANIC BUYING</span>
+          </div>
+          <div class="sc-pane-body-nopad d-flex">
+            
+            <!-- Bids Column -->
+            <div style="flex:1; border-right:1px solid #26334d;">
+              <div class="p-1 fw-bold text-success text-center" style="font-size:10px; background:#111827;">BUY ORDERS (BIDS)</div>
+              <table class="sc-table sc-table-terminal">
+                <thead>
+                  <tr>
+                    <th>Qty (Reams)</th>
+                    <th>Bid Price ($)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background:rgba(34, 197, 94, 0.15);">
+                    <td class="font-mono">50,000</td>
+                    <td class="font-mono text-success fw-bold">2.45</td>
+                  </tr>
+                  <tr style="background:rgba(34, 197, 94, 0.10);">
+                    <td class="font-mono">12,000</td>
+                    <td class="font-mono text-success">2.44</td>
+                  </tr>
+                  <tr style="background:rgba(34, 197, 94, 0.05);">
+                    <td class="font-mono">85,000</td>
+                    <td class="font-mono text-success">2.42</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Asks Column -->
+            <div style="flex:1;">
+              <div class="p-1 fw-bold text-danger text-center" style="font-size:10px; background:#111827;">SELL ORDERS (ASKS)</div>
+              <table class="sc-table sc-table-terminal">
+                <thead>
+                  <tr>
+                    <th>Ask Price ($)</th>
+                    <th>Qty (Reams)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background:rgba(239, 68, 68, 0.15);">
+                    <td class="font-mono text-danger fw-bold">2.48</td>
+                    <td class="font-mono">10,000</td>
+                  </tr>
+                  <tr style="background:rgba(239, 68, 68, 0.10);">
+                    <td class="font-mono text-danger">2.50</td>
+                    <td class="font-mono">45,000</td>
+                  </tr>
+                  <tr style="background:rgba(239, 68, 68, 0.05);">
+                    <td class="font-mono text-danger">2.55</td>
+                    <td class="font-mono">120,000</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column Quadrants -->
+      <div class="sc-pane-group sc-pane-group-vertical" style="flex: 1;">
+        
+        <!-- Q3: Fast Execution & Order Entry -->
+        <div class="sc-pane" style="border:1px solid #26334d;">
+          <div class="sc-pane-header">
+            <span>Rapid Order Execution Console (Pam & Ryan Desk)</span>
+            <span class="sc-badge sc-badge-success">CONNECTED</span>
+          </div>
+          <div class="sc-pane-body">
+            
+            <div class="sc-form-group">
+              <label class="sc-label">Target Account / Client</label>
+              <select class="sc-select">
+                <option>Lackawanna County (High Volume)</option>
+                <option>Blue Cross PA (Jim Account)</option>
+                <option>Scranton Church (Pam Contact)</option>
+              </select>
+            </div>
+
+            <div class="sc-row">
+              <div class="sc-col-6">
+                <div class="sc-form-group">
+                  <label class="sc-label">Ream Quantity</label>
+                  <input type="number" class="sc-input font-mono" value="10000">
+                </div>
+              </div>
+              <div class="sc-col-6">
+                <div class="sc-form-group">
+                  <label class="sc-label">Discount Price / Unit</label>
+                  <input type="text" class="sc-input font-mono" value="$2.45">
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-2">
+              <button class="sc-btn sc-btn-success w-100" onclick="scrantonToast('BUY ORDER EXECUTED: 10,000 Reams delivered by Van!', 'success')">BUY PAPER (10K REAMS)</button>
+              <button class="sc-btn sc-btn-danger w-100" onclick="scrantonToast('SHORT SELL EXECUTED against Dunder Mifflin', 'danger')">SHORT DUNDER MIFFLIN</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Q4: Real-time News Wire Feed -->
+        <div class="sc-pane" style="border:1px solid #26334d;">
+          <div class="sc-pane-header">
+            <span>Market News & Wire Feed</span>
+            <span class="sc-badge">SCRANTON TIMES</span>
+          </div>
+          <div class="sc-pane-body-nopad">
+            <div class="p-2" style="font-size:11px; line-height:1.5;">
+              <div class="mb-2 pb-1 border-bottom">
+                <span class="text-dim font-mono">09:42:15</span> <strong class="text-warning">[BREAKING]</strong> Michael Scott Paper Company offers free pancake delivery with 50 reams.
+              </div>
+              <div class="mb-2 pb-1 border-bottom">
+                <span class="text-dim font-mono">09:38:00</span> <strong class="text-danger">[ALERT]</strong> Charles Miner orders cost-cutting audit at Scranton Branch.
+              </div>
+              <div class="mb-2 pb-1 border-bottom">
+                <span class="text-dim font-mono">09:22:11</span> <strong class="text-success">[DATA]</strong> Pam Beesly completes first paper sale after 42 cold calls.
+              </div>
+              <div>
+                <span class="text-dim font-mono">09:05:40</span> <strong class="text-primary">[CORPORATE]</strong> David Wallace requests buyout negotiations in New York.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Statusbar -->
+  <footer class="sc-statusbar">
+    <div class="d-flex align-center">
+      <div class="sc-statusbar-item"><span class="sc-led sc-led-green"></span> MSPC Arbitrage Engine Online</div>
+      <div class="sc-statusbar-item">CEO: Michael G. Scott</div>
+    </div>
+    <div class="d-flex align-center">
+      <div class="sc-statusbar-item">Delivery Vehicle: Korean Church Van</div>
+      <div class="sc-statusbar-item">Pancakes Remaining: 42</div>
+    </div>
+  </footer>
+
+  <script>
+    // Live Ticker Flashing Simulation
+    setInterval(() => {
+      const bid = document.getElementById('dmn-bid');
+      const ask = document.getElementById('dmn-ask');
+      if (bid && ask) {
+        const delta = (Math.random() - 0.48) * 0.10;
+        const newBid = (parseFloat(bid.textContent) + delta).toFixed(2);
+        const newAsk = (parseFloat(newBid) + 0.05).toFixed(2);
+        
+        bid.textContent = newBid;
+        ask.textContent = newAsk;
+
+        const row = bid.closest('tr');
+        if (delta > 0) {
+          row.className = 'sc-tick-up';
+        } else {
+          row.className = 'sc-tick-down';
+        }
+      }
+    }, 2500);
+  </script>
+
+</body>
+</html>

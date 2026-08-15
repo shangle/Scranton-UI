@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="theme-light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise Sales Dashboard — Scranton-UI Showcase</title>
+  <link rel="stylesheet" href="scranton-ui.css">
+  <script src="scranton-components.js" defer></script>
+</head>
+<body class="sc-app">
+
+  <!-- Header -->
+  <header class="sc-header">
+    <div class="sc-header-brand">
+      <span class="sc-logo-icon">DM</span>
+      <span>DUNDER MIFFLIN SALES & PAPER METRICS <small class="text-dim">(Scranton Branch #049)</small></span>
+    </div>
+    
+    <div class="d-flex align-center gap-3">
+      <nav class="d-flex gap-2">
+        <a href="index.html" class="sc-btn sc-btn-sm">← Docs Hub</a>
+        <a href="dashboard.html" class="sc-btn sc-btn-sm sc-btn-primary">1. Enterprise Sales</a>
+        <a href="tools.html" class="sc-btn sc-btn-sm">2. Dwight Tools</a>
+        <a href="control-panel.html" class="sc-btn sc-btn-sm">3. Toby HR</a>
+        <a href="terminal.html" class="sc-btn sc-btn-sm">4. Trading Terminal</a>
+        <a href="workflow.html" class="sc-btn sc-btn-sm">5. Command Tree</a>
+      </nav>
+      <scranton-theme-switcher></scranton-theme-switcher>
+    </div>
+  </header>
+
+  <!-- Main Body Layout -->
+  <div class="sc-body p-2" style="flex-direction:column; gap:8px;">
+    
+    <!-- Top Level KPI Cards Row -->
+    <div class="sc-row">
+      <div class="sc-col-3">
+        <scranton-metric-card title="Quarterly Paper Reams Sold" value="1,489,200" change="+18.4%" up sparkline="12,18,22,35,40,58,72,95"></scranton-metric-card>
+      </div>
+      <div class="sc-col-3">
+        <scranton-metric-card title="Gross Sales Revenue" value="$482,910" change="+$42.1k" up sparkline="45,50,48,65,70,82,91"></scranton-metric-card>
+      </div>
+      <div class="sc-col-3">
+        <scranton-metric-card title="Golden Ticket Rebates" value="$14,250" change="AUDIT WARN" down sparkline="80,75,40,20,15,30,12"></scranton-metric-card>
+      </div>
+      <div class="sc-col-3">
+        <scranton-metric-card title="Stapler Jell-O Encapsulations" value="18 Incidents" change="HIGH" down sparkline="2,4,3,8,12,15,18"></scranton-metric-card>
+      </div>
+    </div>
+
+    <!-- Central Section: Sales Target Progress & Stock Levels -->
+    <div class="sc-row" style="flex: 1;">
+      
+      <!-- Left Pane: Sales Representative Leaderboard -->
+      <div class="sc-col-7">
+        <div class="sc-pane h-100">
+          <div class="sc-pane-header">
+            <span>Sales Representative Performance Ledger</span>
+            <div class="d-flex gap-1">
+              <button class="sc-btn sc-btn-sm" onclick="scrantonToast('Filtered by Scranton Branch', 'info')">Scranton Only</button>
+              <button class="sc-btn sc-btn-sm sc-btn-beet" onclick="scrantonToast('Dwight Schrute is Top Salesman!', 'success')">Schrute View</button>
+            </div>
+          </div>
+          <div class="sc-pane-body-nopad">
+            <table class="sc-table sc-table-striped sc-table-hover">
+              <thead>
+                <tr>
+                  <th>Representative</th>
+                  <th>Client Account</th>
+                  <th>Paper Grade</th>
+                  <th>Reams</th>
+                  <th>Total ($)</th>
+                  <th>Commission</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="selected">
+                  <td class="fw-bold"><span class="sc-led sc-led-green"></span> Dwight Schrute</td>
+                  <td>Lackawanna County Offices</td>
+                  <td>24lb Heavy Cardstock</td>
+                  <td class="font-mono">14,000</td>
+                  <td class="font-mono">$71,400.00</td>
+                  <td class="font-mono">$7,140.00</td>
+                  <td><span class="sc-badge sc-badge-beet">TOP PRODUCER</span></td>
+                </tr>
+                <tr>
+                  <td><span class="sc-led sc-led-blue"></span> Jim Halpert</td>
+                  <td>Blue Cross Pennsylvania</td>
+                  <td>20lb Bond White</td>
+                  <td class="font-mono">11,500</td>
+                  <td class="font-mono">$48,300.00</td>
+                  <td class="font-mono">$4,830.00</td>
+                  <td><span class="sc-badge sc-badge-success">ON TARGET</span></td>
+                </tr>
+                <tr>
+                  <td><span class="sc-led sc-led-yellow"></span> Andy Bernard</td>
+                  <td>Dunmore High School</td>
+                  <td>Recycled Yellow Ledger</td>
+                  <td class="font-mono">2,800</td>
+                  <td class="font-mono">$9,240.00</td>
+                  <td class="font-mono">$924.00</td>
+                  <td><span class="sc-badge sc-badge-warning">UNDERPERFORMING</span></td>
+                </tr>
+                <tr>
+                  <td><span class="sc-led sc-led-blue"></span> Phyllis Vance</td>
+                  <td>Vance Refrigeration Corp</td>
+                  <td>Glossy Brochure Stock</td>
+                  <td class="font-mono">6,400</td>
+                  <td class="font-mono">$32,000.00</td>
+                  <td class="font-mono">$3,200.00</td>
+                  <td><span class="sc-badge sc-badge-primary">STABLE</span></td>
+                </tr>
+                <tr>
+                  <td><span class="sc-led sc-led-red"></span> Stanley Hudson</td>
+                  <td>Scranton School District</td>
+                  <td>Standard Multi-Purpose</td>
+                  <td class="font-mono">8,900</td>
+                  <td class="font-mono">$31,150.00</td>
+                  <td class="font-mono">$3,115.00</td>
+                  <td><span class="sc-badge sc-badge-success">ON TARGET</span></td>
+                </tr>
+                <tr>
+                  <td><span class="sc-led sc-led-red sc-led-blink"></span> Ryan Howard</td>
+                  <td>Dunder Mifflin Infinity Site</td>
+                  <td>Digital PDF Downloads</td>
+                  <td class="font-mono">0</td>
+                  <td class="font-mono">$0.00</td>
+                  <td class="font-mono">$0.00</td>
+                  <td><span class="sc-badge sc-badge-danger">FRAUD AUDIT</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Pane: Warehouse Inventory & Meters -->
+      <div class="sc-col-5">
+        <div class="sc-pane h-100">
+          <div class="sc-pane-header">
+            <span>Warehouse Inventory & Quota Meters</span>
+            <span class="sc-badge sc-badge-warning">Capacity: 92%</span>
+          </div>
+          <div class="sc-pane-body">
+            
+            <div class="sc-card mb-2 p-2">
+              <div class="d-flex justify-between mb-1">
+                <span class="fw-bold">20lb Bond White (Standard)</span>
+                <span class="font-mono text-success">840,000 / 1,000,000 Reams</span>
+              </div>
+              <div class="sc-progress">
+                <div class="sc-progress-bar sc-progress-bar-success" style="width: 84%;">84% Stocked</div>
+              </div>
+            </div>
+
+            <div class="sc-card mb-2 p-2">
+              <div class="d-flex justify-between mb-1">
+                <span class="fw-bold">24lb Glossy Heavyweight</span>
+                <span class="font-mono text-warning">142,000 / 500,000 Reams</span>
+              </div>
+              <div class="sc-progress">
+                <div class="sc-progress-bar sc-progress-bar-warning" style="width: 28.4%;">28% Low Stock</div>
+              </div>
+            </div>
+
+            <div class="sc-card mb-2 p-2">
+              <div class="d-flex justify-between mb-1">
+                <span class="fw-bold">Schrute Beet Farm Specialty Parchment</span>
+                <span class="font-mono text-beet">98,000 / 100,000 Reams</span>
+              </div>
+              <div class="sc-progress">
+                <div class="sc-progress-bar sc-progress-bar-beet" style="width: 98%;">98% Full Capacity</div>
+              </div>
+            </div>
+
+            <div class="sc-alert sc-alert-info mt-3" style="margin-bottom:0;">
+              <div>
+                <strong>WAREHOUSE NOTICE (Darryl Philbin):</strong> Forklift #2 is currently jammed with Kevin's leftover chili. Expect 15-minute shipping delays.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Statusbar -->
+  <footer class="sc-statusbar">
+    <div class="d-flex align-center">
+      <div class="sc-statusbar-item"><span class="sc-led sc-led-green"></span> Server: Scranton-DB-01</div>
+      <div class="sc-statusbar-item">SQL Status: CONNECTED</div>
+    </div>
+    <div class="d-flex align-center">
+      <div class="sc-statusbar-item">Branch Manager: Michael G. Scott</div>
+      <div class="sc-statusbar-item">System Time: 09:41:00 EST</div>
+    </div>
+  </footer>
+
+</body>
+</html>

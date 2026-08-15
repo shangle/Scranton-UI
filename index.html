@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="theme-light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scranton-UI — App-First & Information-Dense CSS Framework</title>
+  <meta name="description" content="Scranton-UI is an extreme-density, desktop-first CSS framework with zero-padding fluff, sharp 0px corners, and sterile diagnostic layouts. Inspired by Dunder Mifflin Paper Company.">
+  <link rel="stylesheet" href="scranton-ui.css">
+  <script src="scranton-components.js" defer></script>
+</head>
+<body class="sc-app">
+
+  <!-- Header / Navigation Bar -->
+  <header class="sc-header">
+    <div class="sc-header-brand">
+      <span class="sc-logo-icon">DM</span>
+      <span>SCRANTON-UI <small class="text-dim" style="font-size:10px; font-weight:normal;">v1.0.0 (Dunder Mifflin Ed.)</small></span>
+    </div>
+    
+    <div class="d-flex align-center gap-3">
+      <nav class="d-flex gap-2">
+        <a href="index.html" class="sc-btn sc-btn-sm sc-btn-primary">Docs Hub</a>
+        <a href="dashboard.html" class="sc-btn sc-btn-sm">1. Enterprise Sales</a>
+        <a href="tools.html" class="sc-btn sc-btn-sm">2. Dwight Tools</a>
+        <a href="control-panel.html" class="sc-btn sc-btn-sm">3. Toby HR</a>
+        <a href="terminal.html" class="sc-btn sc-btn-sm">4. Trading Terminal</a>
+        <a href="workflow.html" class="sc-btn sc-btn-sm">5. Command Tree</a>
+      </nav>
+      <div style="border-left: 1px solid var(--sc-border); padding-left: 8px;">
+        <scranton-theme-switcher></scranton-theme-switcher>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <div class="sc-body">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sc-sidebar p-2">
+      <div class="sc-label mb-1">Documentation</div>
+      <ul class="sc-tree mb-3">
+        <li><span class="sc-tree-node active">Overview & Philosophy</span></li>
+        <li><span class="sc-tree-node">Getting Started</span></li>
+        <li><span class="sc-tree-node">Design Tokens & Themes</span></li>
+      </ul>
+
+      <div class="sc-label mb-1">Layout & Structure</div>
+      <ul class="sc-tree mb-3">
+        <li><span class="sc-tree-node">Grid System (12-Col)</span></li>
+        <li><span class="sc-tree-node">Diagnostic Panes</span></li>
+        <li><span class="sc-tree-node">Window Titlebars</span></li>
+      </ul>
+
+      <div class="sc-label mb-1">Components</div>
+      <ul class="sc-tree mb-3">
+        <li><span class="sc-tree-node">Buttons & Groups</span></li>
+        <li><span class="sc-tree-node">Form Controls</span></li>
+        <li><span class="sc-tree-node">Tables & Data Grids</span></li>
+        <li><span class="sc-tree-node">Status LEDs & Badges</span></li>
+        <li><span class="sc-tree-node">Progress & Gauges</span></li>
+        <li><span class="sc-tree-node">Custom Web Components</span></li>
+      </ul>
+
+      <div class="sc-card mt-auto p-2" style="background: var(--sc-bg-subtle);">
+        <div class="fw-bold mb-1 text-primary" style="font-size:10.5px;">DUNDER MIFFLIN NOTICE</div>
+        <p class="text-muted" style="font-size:10px; margin:0;">
+          "Should have burned this place down when I had the chance." — Michael Scott
+        </p>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="sc-main p-3">
+      
+      <!-- Banner Alert -->
+      <div class="sc-alert sc-alert-beet mb-3">
+        <div>
+          <strong>ATTENTION EMPLOYEES:</strong> Scranton-UI v1.0 is now the mandatory CSS standard across all Dunder Mifflin regional branches. Soft rounded corners and 24px padding are strictly prohibited by Dwight Schrute.
+        </div>
+        <button class="sc-btn sc-btn-sm sc-btn-mustard" onclick="scrantonToast('Ream Inventory Synced to Scranton Server!', 'success')">Acknowledge Code Beet</button>
+      </div>
+
+      <!-- Hero Section -->
+      <div class="sc-card mb-3">
+        <div class="sc-card-header">
+          <span>Scranton-UI Core Philosophy</span>
+          <span class="sc-badge sc-badge-success"><span class="sc-led sc-led-green sc-led-blink"></span> Production Ready</span>
+        </div>
+        <div class="sc-card-body">
+          <h2>App-First & Information-Dense CSS Infrastructure</h2>
+          <p class="text-muted mt-1 mb-2">
+            Scranton-UI completely rejects mobile-first web bloat. Built specifically for high-frequency desktop applications, enterprise diagnostic panels, paper inventory tracking, and military-grade workplace organization.
+          </p>
+          <div class="d-flex gap-2 mb-2">
+            <span class="sc-badge sc-badge-primary">0px Border Radius</span>
+            <span class="sc-badge sc-badge-beet">Extreme Data Density</span>
+            <span class="sc-badge sc-badge-warning">Vanilla Web Components</span>
+            <span class="sc-badge">URL State Synced</span>
+          </div>
+
+          <pre class="font-mono p-2 border" style="background: var(--sc-bg-subtle); font-size:11px;">
+&lt;!-- Include Scranton-UI stylesheet and zero-dependency web components --&gt;
+&lt;link rel="stylesheet" href="scranton-ui.css"&gt;
+&lt;script src="scranton-components.js" defer&gt;&lt;/script&gt;</pre>
+        </div>
+      </div>
+
+      <!-- Showcase Templates Grid -->
+      <h3 class="mb-2">Required Template Showcase Applications</h3>
+      <div class="sc-row mb-4">
+        <div class="sc-col-4">
+          <div class="sc-card h-100">
+            <div class="sc-card-header">1. Enterprise Dashboard</div>
+            <div class="sc-card-body">
+              <p class="text-muted mb-2">KPI metrics, paper sales charts, stapler incidents, low-stock ream tables.</p>
+              <a href="dashboard.html" class="sc-btn sc-btn-sm sc-btn-primary w-100">Launch Sales Dashboard →</a>
+            </div>
+          </div>
+        </div>
+        <div class="sc-col-4">
+          <div class="sc-card h-100">
+            <div class="sc-card-header">2. OS Tools Grid</div>
+            <div class="sc-card-body">
+              <p class="text-muted mb-2">Dwight's Security Protocols, desktop shortcut grid, weapons index radar.</p>
+              <a href="tools.html" class="sc-btn sc-btn-sm sc-btn-secondary w-100">Launch Dwight Tools →</a>
+            </div>
+          </div>
+        </div>
+        <div class="sc-col-4">
+          <div class="sc-card h-100">
+            <div class="sc-card-header">3. Control Panel</div>
+            <div class="sc-card-body">
+              <p class="text-muted mb-2">Toby's HR Complaint Logging System, category navigation, form controls.</p>
+              <a href="control-panel.html" class="sc-btn sc-btn-sm sc-btn-beet w-100">Launch HR System →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-row mb-4">
+        <div class="sc-col-6">
+          <div class="sc-card h-100">
+            <div class="sc-card-header">4. The Trading Terminal</div>
+            <div class="sc-card-body">
+              <p class="text-muted mb-2">Michael Scott Paper Company "Market Watch", interlocking 4-pane zero-margin terminal feed.</p>
+              <a href="terminal.html" class="sc-btn sc-btn-sm sc-btn-warning w-100">Launch Trading Terminal →</a>
+            </div>
+          </div>
+        </div>
+        <div class="sc-col-6">
+          <div class="sc-card h-100">
+            <div class="sc-card-header">5. Workflow Simulator</div>
+            <div class="sc-card-body">
+              <p class="text-muted mb-2">Assistant to the Regional Manager Chain of Command tree & operational load engine.</p>
+              <a href="workflow.html" class="sc-btn sc-btn-sm sc-btn-success w-100">Launch Workflow Simulator →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Component Explorer Section -->
+      <h3 class="mb-2">Interactive Component Catalog & Parity Sandbox</h3>
+      
+      <scranton-tabs sync-url param-name="section">
+        
+        <!-- Tab 1: Typography & Buttons -->
+        <scranton-tab label="Buttons & Badges" id="buttons">
+          <div class="sc-card p-3 mt-2">
+            <h4>Button Variants & Sizes</h4>
+            <div class="d-flex flex-wrap gap-2 align-center my-2">
+              <button class="sc-btn sc-btn-primary">Primary (Corporate Navy)</button>
+              <button class="sc-btn sc-btn-secondary">Secondary (Warehouse Slate)</button>
+              <button class="sc-btn sc-btn-success">Success (Sales Up)</button>
+              <button class="sc-btn sc-btn-warning">Warning (Stapler Jell-O)</button>
+              <button class="sc-btn sc-btn-danger">Danger (Threat Level)</button>
+              <button class="sc-btn sc-btn-beet">Beet (Schrute Farm)</button>
+              <button class="sc-btn sc-btn-mustard">Mustard (Dwight Shirt)</button>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 align-center my-2">
+              <button class="sc-btn sc-btn-sm sc-btn-primary">Small Button</button>
+              <button class="sc-btn sc-btn-primary">Regular Button</button>
+              <button class="sc-btn sc-btn-lg sc-btn-primary">Large Dense Button</button>
+            </div>
+
+            <h4 class="mt-3">Status LEDs & Badges</h4>
+            <div class="d-flex align-center gap-3 my-2">
+              <span class="sc-badge sc-badge-primary">20LB Glossy</span>
+              <span class="sc-badge sc-badge-success">Stock OK</span>
+              <span class="sc-badge sc-badge-warning">Golden Ticket</span>
+              <span class="sc-badge sc-badge-danger">Recyclops Active</span>
+              <span class="sc-badge sc-badge-beet">Schrute Code Beet</span>
+            </div>
+            
+            <div class="d-flex align-center gap-3 my-2">
+              <div><span class="sc-led sc-led-green"></span> Warehouse Sensor</div>
+              <div><span class="sc-led sc-led-red sc-led-blink"></span> Michael Scott Office Radar</div>
+              <div><span class="sc-led sc-led-yellow"></span> Kevin Chili Pot Status</div>
+              <div><span class="sc-led sc-led-blue"></span> Pam Art Studio Desk</div>
+            </div>
+          </div>
+        </scranton-tab>
+
+        <!-- Tab 2: Forms & Inputs -->
+        <scranton-tab label="Forms & Controls" id="forms">
+          <div class="sc-card p-3 mt-2">
+            <div class="sc-row">
+              <div class="sc-col-6">
+                <div class="sc-form-group">
+                  <label class="sc-label">Employee Name</label>
+                  <input type="text" class="sc-input" value="Creed Bratton" placeholder="Enter employee name...">
+                </div>
+                <div class="sc-form-group">
+                  <label class="sc-label">Paper Stock Type</label>
+                  <select class="sc-select">
+                    <option>20lb Standard White Bond</option>
+                    <option>24lb Heavy Duty Cardstock</option>
+                    <option>Golden Ticket Spec Card</option>
+                    <option>Schrute Farms Beet Parchment</option>
+                  </select>
+                </div>
+                <div class="sc-form-group">
+                  <label class="sc-label">Order Notes (Michael Scott Quotes)</label>
+                  <textarea class="sc-textarea">"I'm not superstitious, but I am a little stitious."</textarea>
+                </div>
+              </div>
+              
+              <div class="sc-col-6">
+                <div class="sc-form-group">
+                  <label class="sc-label">Input Group Addons</label>
+                  <div class="sc-input-group mb-2">
+                    <span class="sc-input-addon">$</span>
+                    <input type="text" class="sc-input" value="45,210.00">
+                    <button class="sc-btn sc-btn-primary">Update</button>
+                  </div>
+                </div>
+
+                <div class="sc-form-group">
+                  <label class="sc-label">Checkboxes & Radio Options</label>
+                  <div class="mb-2">
+                    <label class="sc-check">
+                      <input type="checkbox" checked> Staples Included
+                    </label>
+                    <label class="sc-check">
+                      <input type="checkbox"> Jell-O Encased
+                    </label>
+                  </div>
+                  <div>
+                    <label class="sc-check">
+                      <input type="radio" name="branch" checked> Scranton
+                    </label>
+                    <label class="sc-check">
+                      <input type="radio" name="branch"> Stamford
+                    </label>
+                    <label class="sc-check">
+                      <input type="radio" name="branch"> Utica
+                    </label>
+                  </div>
+                </div>
+
+                <div class="sc-form-group mt-2">
+                  <label class="sc-label">System Switches</label>
+                  <label class="sc-switch">
+                    <input type="checkbox" checked>
+                    <span class="sc-switch-slider"></span>
+                    <span>Enable Security Surveillance (Dwight)</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </scranton-tab>
+
+        <!-- Tab 3: Tables & Grids -->
+        <scranton-tab label="Data Grids" id="tables">
+          <div class="sc-card p-3 mt-2">
+            <h4>Dense Paper Inventory Table</h4>
+            <div class="sc-table-container mt-2">
+              <table class="sc-table sc-table-striped sc-table-hover">
+                <thead>
+                  <tr>
+                    <th>Item ID</th>
+                    <th>Description</th>
+                    <th>Sales Representative</th>
+                    <th>Qty (Reams)</th>
+                    <th>Price / Unit</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="font-mono">DM-1049</td>
+                    <td>20lb Glossy Letter Paper</td>
+                    <td>Jim Halpert</td>
+                    <td class="font-mono">4,500</td>
+                    <td class="font-mono">$3.45</td>
+                    <td><span class="sc-badge sc-badge-success">In Stock</span></td>
+                  </tr>
+                  <tr class="selected">
+                    <td class="font-mono">DM-2088</td>
+                    <td>24lb Heavy Duty Cardstock</td>
+                    <td>Dwight Schrute</td>
+                    <td class="font-mono">8,900</td>
+                    <td class="font-mono">$5.10</td>
+                    <td><span class="sc-badge sc-badge-beet">Schrute Top Seller</span></td>
+                  </tr>
+                  <tr>
+                    <td class="font-mono">DM-3011</td>
+                    <td>Golden Ticket Discount Batch</td>
+                    <td>Michael Scott</td>
+                    <td class="font-mono">1,200</td>
+                    <td class="font-mono">$1.99</td>
+                    <td><span class="sc-badge sc-badge-warning">Audit Warning</span></td>
+                  </tr>
+                  <tr>
+                    <td class="font-mono">DM-4492</td>
+                    <td>Vance Refrigeration Custom Boxes</td>
+                    <td>Phyllis Vance</td>
+                    <td class="font-mono">600</td>
+                    <td class="font-mono">$12.50</td>
+                    <td><span class="sc-badge sc-badge-primary">Delivered</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </scranton-tab>
+
+        <!-- Tab 4: Web Components -->
+        <scranton-tab label="Web Components" id="components">
+          <div class="sc-card p-3 mt-2">
+            <h4>Custom Web Components Showcase</h4>
+            <div class="sc-row my-2">
+              <div class="sc-col-4">
+                <scranton-metric-card title="Jim Halpert Sales" value="$124,500" change="+14.2%" up sparkline="10,20,15,30,28,45,60"></scranton-metric-card>
+              </div>
+              <div class="sc-col-4">
+                <scranton-metric-card title="Stapler Jell-O Incidents" value="14" change="CRITICAL" down sparkline="40,35,50,20,60,80,95"></scranton-metric-card>
+              </div>
+              <div class="sc-col-4">
+                <scranton-metric-card title="Schrute Beet Yield" value="98.4%" change="+8.1%" up sparkline="50,55,60,75,85,90,98"></scranton-metric-card>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+              <button class="sc-btn sc-btn-primary" onclick="document.getElementById('demo-modal').open()">Open Desktop Window Modal</button>
+              <button class="sc-btn sc-btn-success" onclick="scrantonToast('Kevin Malone spilled the chili!', 'danger')">Trigger Diagnostic Toast</button>
+            </div>
+          </div>
+        </scranton-tab>
+
+      </scranton-tabs>
+
+    </main>
+
+  </div>
+
+  <!-- Footer / Statusbar -->
+  <footer class="sc-statusbar">
+    <div class="d-flex align-center">
+      <div class="sc-statusbar-item">
+        <span class="sc-led sc-led-green"></span> Network: Dunder-Mifflin-Local
+      </div>
+      <div class="sc-statusbar-item">
+        Branch: Scranton #049
+      </div>
+    </div>
+    <div class="d-flex align-center">
+      <div class="sc-statusbar-item">
+        Paper Reams Tracked: 1,489,200
+      </div>
+      <div class="sc-statusbar-item">
+        UTF-8 | Tabular Nums
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal Component Demo -->
+  <scranton-modal id="demo-modal" title="Dunder Mifflin Security Override Window">
+    <div class="sc-alert sc-alert-warning mb-2">
+      <strong>SECURITY NOTICE:</strong> Dwight Schrute has activated desktop monitoring.
+    </div>
+    <p class="text-muted">
+      "Whenever I'm about to do something, I think, 'Would an idiot do that?' And if they would, I do not do that thing."
+    </p>
+    <div class="d-flex justify-end gap-2 mt-3">
+      <button class="sc-btn" onclick="document.getElementById('demo-modal').close()">Cancel</button>
+      <button class="sc-btn sc-btn-primary" onclick="scrantonToast('Override Confirmed', 'success'); document.getElementById('demo-modal').close();">Confirm Override</button>
+    </div>
+  </scranton-modal>
+
+</body>
+</html>

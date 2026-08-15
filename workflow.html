@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="theme-light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assistant to the Regional Manager Chain of Command — Scranton-UI Showcase</title>
+  <link rel="stylesheet" href="scranton-ui.css">
+  <script src="scranton-components.js" defer></script>
+</head>
+<body class="sc-app">
+
+  <!-- Header -->
+  <header class="sc-header">
+    <div class="sc-header-brand">
+      <span class="sc-logo-icon" style="background:var(--sc-success); color:#fff;">CC</span>
+      <span>ASSISTANT TO THE REGIONAL MANAGER CHAIN OF COMMAND <small class="text-dim">(Escalation Simulator)</small></span>
+    </div>
+    
+    <div class="d-flex align-center gap-3">
+      <nav class="d-flex gap-2">
+        <a href="index.html" class="sc-btn sc-btn-sm">← Docs Hub</a>
+        <a href="dashboard.html" class="sc-btn sc-btn-sm">1. Enterprise Sales</a>
+        <a href="tools.html" class="sc-btn sc-btn-sm">2. Dwight Tools</a>
+        <a href="control-panel.html" class="sc-btn sc-btn-sm">3. Toby HR</a>
+        <a href="terminal.html" class="sc-btn sc-btn-sm">4. Trading Terminal</a>
+        <a href="workflow.html" class="sc-btn sc-btn-sm sc-btn-success">5. Command Tree</a>
+      </nav>
+      <scranton-theme-switcher></scranton-theme-switcher>
+    </div>
+  </header>
+
+  <!-- Main Body Layout -->
+  <div class="sc-body p-2" style="flex-direction:column; gap:8px;">
+    
+    <!-- Top Action Toolbar -->
+    <div class="sc-card p-2 mb-1" style="background: var(--sc-bg-subtle);">
+      <div class="d-flex align-center justify-between">
+        <div class="d-flex align-center gap-2">
+          <span class="fw-bold">WORKPLACE LOAD SIMULATION ENGINE:</span>
+          <span class="sc-badge sc-badge-beet"><span class="sc-led sc-led-green sc-led-blink"></span> CODE BEET READY</span>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="sc-btn sc-btn-sm sc-btn-primary" onclick="scrantonToast('Simulating Golden Ticket Order Surge!', 'info')">Simulate Order Surge</button>
+          <button class="sc-btn sc-btn-sm sc-btn-warning" onclick="scrantonToast('Emergency Dundie Award Drill Initiated!', 'warning')">Emergency Dundies</button>
+          <button class="sc-btn sc-btn-sm sc-btn-beet" onclick="scrantonToast('CODE BEET DISPATCHED TO ALL STAFF!', 'danger')">Code Beet Trigger</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid: Tree Hierarchy & Load Monitors -->
+    <div class="sc-row" style="flex:1;">
+      
+      <!-- Left Column: Organizational Hierarchy Tree -->
+      <div class="sc-col-5">
+        <div class="sc-pane h-100">
+          <div class="sc-pane-header">
+            <span>Branch Command Structure & Tree View</span>
+            <span class="sc-badge sc-badge-primary">12 Staff Members</span>
+          </div>
+          <div class="sc-pane-body">
+            
+            <ul class="sc-tree" style="font-size:12px;">
+              <li>
+                <div class="sc-tree-node fw-bold text-primary">
+                  👑 Michael G. Scott (Regional Manager)
+                </div>
+                <ul>
+                  <li>
+                    <div class="sc-tree-node fw-bold text-beet active">
+                      🛡️ Dwight K. Schrute (Assistant TO THE Regional Manager)
+                    </div>
+                    <ul>
+                      <li>
+                        <div class="sc-tree-node fw-bold text-accent">
+                          👔 Jim Halpert (Co-Manager / Prank Master)
+                        </div>
+                        <ul>
+                          <li><div class="sc-tree-node">🎨 Pam Beesly (Sales / Art Dir.)</div></li>
+                        </ul>
+                      </li>
+                      <li>
+                        <div class="sc-tree-node fw-bold text-success">
+                          📊 Accounting Department
+                        </div>
+                        <ul>
+                          <li><div class="sc-tree-node">🐱 Angela Martin (Head Accountant)</div></li>
+                          <li><div class="sc-tree-node">🧮 Oscar Martinez (Senior Accountant)</div></li>
+                          <li><div class="sc-tree-node">🍲 Kevin Malone (Keleven Specialist)</div></li>
+                        </ul>
+                      </li>
+                      <li>
+                        <div class="sc-tree-node fw-bold text-warning">
+                          🏭 Warehouse & Quality Control
+                        </div>
+                        <ul>
+                          <li><div class="sc-tree-node">📦 Darryl Philbin (Warehouse Manager)</div></li>
+                          <li><div class="sc-tree-node">❓ Creed Bratton (Quality Assurance)</div></li>
+                          <li><div class="sc-tree-node">🍷 Meredith Palmer (Supplier Relations)</div></li>
+                        </ul>
+                      </li>
+                      <li>
+                        <div class="sc-tree-node fw-bold text-dim">
+                          🚫 Annex / HR
+                        </div>
+                        <ul>
+                          <li><div class="sc-tree-node">📝 Toby Flenderson (HR Rep)</div></li>
+                          <li><div class="sc-tree-node">🛍️ Kelly Kapoor (Customer Service)</div></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Operational Loads & Escalation Protocols -->
+      <div class="sc-col-7">
+        <div class="sc-pane h-100">
+          <div class="sc-pane-header">
+            <span>Workplace Operational Load & Escalation Monitors</span>
+            <span class="sc-badge sc-badge-success">OPERATIONAL INTEGRITY: 94.2%</span>
+          </div>
+          <div class="sc-pane-body">
+            
+            <div class="sc-card mb-2 p-2">
+              <div class="d-flex justify-between mb-1">
+                <span class="fw-bold">Dwight Schrute Security Workload</span>
+                <span class="font-mono text-beet">142% (OVERLOADED)</span>
+              </div>
+              <div class="sc-progress mb-1">
+                <div class="sc-progress-bar sc-progress-bar-beet" style="width: 100%;">CODE BEET MAX</div>
+              </div>
+              <p class="text-muted" style="font-size:10px; margin:0;">
+                Tasks: Inspecting ceiling tiles, monitoring Mose walkie-talkie, guarding Michael Scott desk.
+              </p>
+            </div>
+
+            <div class="sc-card mb-2 p-2">
+              <div class="d-flex justify-between mb-1">
+                <span class="fw-bold">Accounting Keleven Math Error Tolerance</span>
+                <span class="font-mono text-warning">A Mistake Plus Keleven gets you home by 7:00</span>
+              </div>
+              <div class="sc-progress mb-1">
+                <div class="sc-progress-bar sc-progress-bar-warning" style="width: 68%;">68% Keleven</div>
+              </div>
+              <p class="text-muted" style="font-size:10px; margin:0;">
+                Kevin Malone is balancing the books with made-up numbers. Angela is writing an angry memo.
+              </p>
+            </div>
+
+            <div class="sc-card mb-2 p-2">
+              <div class="d-flex justify-between mb-1">
+                <span class="fw-bold">Creed Bratton Quality Assurance Inspection Rate</span>
+                <span class="font-mono text-danger">0.02% (Quabity Assuance)</span>
+              </div>
+              <div class="sc-progress mb-1">
+                <div class="sc-progress-bar sc-progress-bar-danger" style="width: 4%;">4% Inspected</div>
+              </div>
+              <p class="text-muted" style="font-size:10px; margin:0;">
+                Creed has missed 4 consecutive weekly paper quality checks while blogging on a Word doc.
+              </p>
+            </div>
+
+            <!-- Escalation Protocol Matrix Table -->
+            <h4 class="mt-3 mb-2">Escalation Protocol Action Matrix</h4>
+            <div class="sc-table-container">
+              <table class="sc-table sc-table-striped">
+                <thead>
+                  <tr>
+                    <th>Escalation Level</th>
+                    <th>Trigger Event</th>
+                    <th>Designated Officer</th>
+                    <th>Protocol Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="sc-badge sc-badge-primary">LEVEL 1</span></td>
+                    <td>Jim Prank on Dwight</td>
+                    <td>Dwight Schrute</td>
+                    <td>File complaint with Toby (Ignored)</td>
+                  </tr>
+                  <tr>
+                    <td><span class="sc-badge sc-badge-warning">LEVEL 2</span></td>
+                    <td>Michael Scott Idea</td>
+                    <td>Jim & Pam</td>
+                    <td>Nod politely and humor Michael</td>
+                  </tr>
+                  <tr>
+                    <td><span class="sc-badge sc-badge-beet">LEVEL 3</span></td>
+                    <td>Bat loose in office</td>
+                    <td>Dwight Schrute</td>
+                    <td>Capture with bag over Meredith head</td>
+                  </tr>
+                  <tr>
+                    <td><span class="sc-badge sc-badge-danger">LEVEL 4</span></td>
+                    <td>Fire Safety Emergency</td>
+                    <td>Dwight Schrute</td>
+                    <td>Cut door handles, throw cat through ceiling</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Statusbar -->
+  <footer class="sc-statusbar">
+    <div class="d-flex align-center">
+      <div class="sc-statusbar-item"><span class="sc-led sc-led-green"></span> Command Tree Status: ACTIVE</div>
+      <div class="sc-statusbar-item">Highest Authority: Michael Scott</div>
+    </div>
+    <div class="d-flex align-center">
+      <div class="sc-statusbar-item">Real Manager: Dwight (Self-proclaimed)</div>
+      <div class="sc-statusbar-item">Branch: Scranton #049</div>
+    </div>
+  </footer>
+
+</body>
+</html>
