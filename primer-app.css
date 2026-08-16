@@ -1,0 +1,128 @@
+/* ==========================================================================
+   PRIMER APP STYLES & ACCENT OVERRIDES
+   Leveraging official @primer/css (GitHub Design System)
+   ========================================================================== */
+
+@import url('primer-official.css');
+
+/* Custom Schrute Beet Theme Extension for Primer CSS Tokens */
+[data-color-mode="beet"] {
+  --color-canvas-default: #210515;
+  --color-canvas-overlay: #380a24;
+  --color-canvas-subtle: #380a24;
+  --color-canvas-inset: #1a0311;
+  --color-border-default: #701a75;
+  --color-border-muted: #500e34;
+  
+  --color-fg-default: #fef3c7;
+  --color-fg-muted: #fde68a;
+  --color-fg-subtle: #fbbf24;
+  
+  --color-accent-fg: #d97706;
+  --color-accent-emphasis: #d97706;
+  --color-accent-muted: rgba(217, 119, 6, 0.2);
+  --color-accent-subtle: rgba(217, 119, 6, 0.15);
+  
+  --color-success-fg: #22c55e;
+  --color-success-emphasis: #15803d;
+  --color-attention-fg: #f59e0b;
+  --color-attention-emphasis: #d97706;
+  --color-danger-fg: #f87171;
+  --color-danger-emphasis: #dc2626;
+  --color-done-fg: #e879f9;
+  --color-done-emphasis: #701a75;
+}
+
+/* Global App Shell & Layout Enhancements */
+html, body {
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  background-color: var(--color-canvas-default, #f6f8fa);
+  color: var(--color-fg-default, #1F2328);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.primer-app-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Custom Header Navigation Bar */
+.Primer-Header {
+  background-color: var(--color-canvas-subtle, #f6f8fa);
+  border-bottom: 1px solid var(--color-border-default, #d0d7de);
+  padding: 12px 24px;
+}
+
+[data-color-mode="dark"] .Primer-Header {
+  background-color: var(--color-canvas-subtle, #161b22);
+  border-bottom: 1px solid var(--color-border-default, #30363d);
+}
+
+.Primer-Header-brand {
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-fg-default);
+}
+
+/* Responsive Table Wrapper */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Micro-flash keyframe animations for trading terminal */
+@keyframes primer-flash-up {
+  0%   { background-color: rgba(31, 136, 61, 0.35); }
+  100% { background-color: transparent; }
+}
+@keyframes primer-flash-down {
+  0%   { background-color: rgba(207, 34, 46, 0.35); }
+  100% { background-color: transparent; }
+}
+
+.flash-up { animation: primer-flash-up 1s ease-out; }
+.flash-down { animation: primer-flash-down 1s ease-out; }
+
+/* Custom Modal Dialog Backdrop */
+.primer-dialog-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(14, 18, 22, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.primer-dialog-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.primer-dialog-window {
+  width: 540px;
+  max-width: 92vw;
+  background-color: var(--color-canvas-default, #ffffff);
+  border: 1px solid var(--color-border-default, #d0d7de);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(14, 18, 22, 0.2);
+  transform: translateY(-8px) scale(0.98);
+  transition: transform 0.15s ease;
+}
+
+.primer-dialog-backdrop.open .primer-dialog-window {
+  transform: translateY(0) scale(1);
+}
