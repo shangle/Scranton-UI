@@ -1,5 +1,5 @@
 /**
- * Scranton-UI Custom Web Components v1.5.0
+ * Scranton-UI Custom Web Components v1.6.0
  * Zero-dependency, lightweight Vanilla Web Components & Diagnostic Controls.
  * Features URL state management, ARIA accessibility, focus trapping, reactive SVG rendering, popstate sync, interactive table sorting, and drag-resizable splitters.
  */
@@ -18,11 +18,13 @@
       .replace(/'/g, '&#039;');
   }
 
-  // URL Query Sync Helper (Preserving Hash Fragments)
+  // URL Query Sync Helper (Preserving Hash Fragments & Debouncing History Calls)
+  let urlSyncDebounceTimer = null;
+
   function setUrlParam(key, val) {
     const url = new URL(window.location.href);
     const currentVal = url.searchParams.get(key);
-    if (val) {
+    if (val !== null && val !== undefined && val !== '') {
       if (currentVal !== val) {
         url.searchParams.set(key, val);
         window.history.replaceState({}, '', url.pathname + url.search + url.hash);
@@ -31,6 +33,13 @@
       url.searchParams.delete(key);
       window.history.replaceState({}, '', url.pathname + url.search + url.hash);
     }
+  }
+
+  function setUrlParamDebounced(key, val, delay = 150) {
+    if (urlSyncDebounceTimer) clearTimeout(urlSyncDebounceTimer);
+    urlSyncDebounceTimer = setTimeout(() => {
+      setUrlParam(key, val);
+    }, delay);
   }
 
   function getUrlParam(key) {
@@ -82,7 +91,7 @@
     applyTheme(theme, updateUrl = true) {
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('scranton-theme', theme);
-      if (updateUrl) setUrlParam('theme', theme);
+      if (updateUrl) setUrlParam(theme !== 'theme-light' ? 'theme' : null, theme !== 'theme-light' ? theme : null);
     }
   }
   customElements.define('scranton-theme-switcher', ScrantonThemeSwitcher);
@@ -155,7 +164,7 @@
         const a = document.createElement('a');
         a.id = `tab-link-${tabId}`;
         a.className = `sc-nav-link ${idx === activeIndex ? 'active' : ''}`;
-        a.innerHTML = `${escapeHTML(label)} ${badgeVal ? `<span class="sc-nav-badge">${escapeHTML(badgeVal)}</span>` : ''}`;
+        a.innerHTML = `${escapeHTML(label)} ${badgeVal !== null && badgeVal !== undefined ? `<span class="sc-nav-badge">${escapeHTML(badgeVal)}</span>` : ''}`;
         a.setAttribute('role', 'tab');
         a.setAttribute('aria-selected', idx === activeIndex ? 'true' : 'false');
         a.setAttribute('tabindex', idx === activeIndex ? '0' : '-1');
@@ -185,13 +194,17 @@
       if (e.key === 'ArrowRight') nextIdx = (activeIdx + 1) % links.length;
       if (e.key === 'ArrowLeft') nextIdx = (activeIdx - 1 + links.length) % links.length;
 
-      links[nextIdx].focus();
+      const targetLink = links[nextIdx];
+      targetLink.focus();
+      if (typeof targetLink.scrollIntoView === 'function') {
+        targetLink.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      }
       const syncUrl = this.hasAttribute('sync-url');
       const paramName = this.getAttribute('param-name') || 'tab';
-      this.setActiveTab(nextIdx, syncUrl, paramName);
+      this.setActiveTab(nextIdx, syncUrl, paramName, true);
     }
 
-    setActiveTab(index, syncUrl, paramName) {
+    setActiveTab(index, syncUrl, paramName, isDebounced = false) {
       this._activeIndex = index;
       const tabLinks = this.querySelectorAll(':scope > .sc-nav > li > .sc-nav-link');
       const tabPanels = Array.from(this.children).filter(el => el.tagName.toLowerCase() === 'scranton-tab');
@@ -213,7 +226,11 @@
           panel.style.display = 'block';
           if (syncUrl) {
             const tabId = panel.getAttribute('id');
-            setUrlParam(paramName, tabId);
+            if (isDebounced) {
+              setUrlParamDebounced(paramName, tabId);
+            } else {
+              setUrlParam(paramName, tabId);
+            }
           }
         } else {
           panel.style.display = 'none';
@@ -231,7 +248,7 @@
   customElements.define('scranton-tab', ScrantonTab);
 
   // ---------------------------------------------------------------------------
-  // 3. <scranton-modal> with aria-describedby & Focus Trap
+  // 3. <scranton-modal> with aria-describedby & Dynamic Focus Trap
   // ---------------------------------------------------------------------------
   class ScrantonModal extends HTMLElement {
     constructor() {
@@ -250,7 +267,8 @@
         }
 
         if (e.key === 'Tab') {
-          const focusables = Array.from(this.backdrop.querySelectorAll('button, input, select, textarea, [tabindex="0"]'));
+          const focusables = Array.from(this.backdrop.querySelectorAll('button, input, select, textarea, [tabindex="0"]'))
+            .filter(el => el.offsetWidth > 0 && el.offsetHeight > 0);
           if (focusables.length === 0) return;
           const first = focusables[0];
           const last = focusables[focusables.length - 1];
@@ -284,7 +302,12 @@
 
       const fragment = document.createDocumentFragment();
       Array.from(this.childNodes).forEach(child => {
-        fragment.appendChild(child.cloneNode(true));
+        const cloned = child.cloneNode(true);
+        // Avoid duplicate ID collision if cloned into modal
+        if (cloned.nodeType === 1 && cloned.hasAttribute('id')) {
+          cloned.setAttribute('id', `${cloned.getAttribute('id')}-modal-copy`);
+        }
+        fragment.appendChild(cloned);
       });
 
       this.backdrop = document.createElement('div');
@@ -403,7 +426,8 @@
 
       const width = parseInt(this.getAttribute('width') || '100', 10);
       const height = parseInt(this.getAttribute('height') || '24', 10);
-      const color = escapeHTML(this.getAttribute('color') || 'var(--sc-accent)');
+      const rawColor = this.getAttribute('color') || 'var(--sc-accent)';
+      const color = escapeHTML(rawColor);
       const isFluid = this.hasAttribute('fluid');
 
       const svgWidth = isFluid ? '100%' : width;
@@ -441,8 +465,8 @@
         <svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" style="display:inline-block; vertical-align:middle; overflow:visible;">
           <defs>
             <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="${color}" stop-opacity="0.35" />
-              <stop offset="100%" stop-color="${color}" stop-opacity="0.0" />
+              <stop offset="0%" stop-color="currentColor" stop-opacity="0.35" style="stop-color:${color};" />
+              <stop offset="100%" stop-color="currentColor" stop-opacity="0.0" style="stop-color:${color};" />
             </linearGradient>
           </defs>
           <polygon class="spark-poly" fill="url(#${gradId})" points="${areaPoints}" />
@@ -455,7 +479,7 @@
   customElements.define('scranton-sparkline', ScrantonSparkline);
 
   // ---------------------------------------------------------------------------
-  // 5. <scranton-metric-card> with Trend Direction Arrow Vectors
+  // 5. <scranton-metric-card> with Dynamic Tooltip Inspection
   // ---------------------------------------------------------------------------
   class ScrantonMetricCard extends HTMLElement {
     static get observedAttributes() {
@@ -492,7 +516,7 @@
             ${changeText ? `<span class="${badgeClass}">${changeText}</span>` : ''}
           </div>
           <div class="sc-card-body d-flex align-center justify-between" style="padding:6px 8px;">
-            <div class="sc-metric-value" aria-live="polite" aria-atomic="true" style="font-size:18px; font-weight:800; font-family:var(--sc-font-mono); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:1; min-width:0;">${value}</div>
+            <div class="sc-metric-value" title="${value}" aria-live="polite" aria-atomic="true" style="font-size:18px; font-weight:800; font-family:var(--sc-font-mono); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:1; min-width:0;">${value}</div>
             ${sparklineVals ? `<scranton-sparkline values="${sparklineVals}" width="64" height="20" style="flex-shrink:0; margin-left:6px;"></scranton-sparkline>` : ''}
           </div>
         </div>
@@ -502,7 +526,7 @@
   customElements.define('scranton-metric-card', ScrantonMetricCard);
 
   // ---------------------------------------------------------------------------
-  // 6. Global Toast Notification Helper
+  // 6. Global Toast Notification Helper & Alt+T Shortcut
   // ---------------------------------------------------------------------------
   window.scrantonToast = function(msg, type = 'info') {
     let container = document.getElementById('sc-toast-container');
@@ -577,8 +601,20 @@
     startTimer(4000);
   };
 
+  // Keyboard shortcut Alt+T to focus active toasts
+  document.addEventListener('keydown', (e) => {
+    if (e.altKey && (e.key === 't' || e.key === 'T')) {
+      const container = document.getElementById('sc-toast-container');
+      if (container && container.children.length > 0) {
+        e.preventDefault();
+        const firstBtn = container.querySelector('button, [tabindex="0"]');
+        if (firstBtn) firstBtn.focus();
+      }
+    }
+  });
+
   // ---------------------------------------------------------------------------
-  // 7. Interactive Table Column Sorting Engine (K-Suffix & Parentheses Parsing)
+  // 7. Interactive Table Column Sorting Engine (M/K Suffix & Comma Parsing)
   // ---------------------------------------------------------------------------
   function parseCellValue(cell) {
     if (cell.hasAttribute('data-sort-value')) return cell.getAttribute('data-sort-value');
@@ -595,19 +631,19 @@
       return text;
     }
 
-    // K/M Abbreviated Multipliers: +$42.1k -> 42100
-    const kMatch = text.match(/^[+$-]?([\d.]+)\s*k$/i);
-    if (kMatch) {
-      return parseFloat(kMatch[1]) * 1000;
-    }
-    const mMatch = text.match(/^[+$-]?([\d.]+)\s*m$/i);
+    // M/K Abbreviated Multipliers: $1.48M -> 1480000, +$42.1k -> 42100
+    const cleanText = text.replace(/[$%,]/g, '');
+    const mMatch = cleanText.match(/^[+$-]?([\d.]+)\s*m$/i);
     if (mMatch) {
       return parseFloat(mMatch[1]) * 1000000;
     }
 
-    // Clean currency symbols, commas, and percentage signs
-    const cleanStr = text.replace(/[$%,]/g, '');
-    const cleanNum = parseFloat(cleanStr);
+    const kMatch = cleanText.match(/^[+$-]?([\d.]+)\s*k$/i);
+    if (kMatch) {
+      return parseFloat(kMatch[1]) * 1000;
+    }
+
+    const cleanNum = parseFloat(cleanText);
     return isNaN(cleanNum) ? text : cleanNum;
   }
 
@@ -706,6 +742,7 @@
           const offsetY = e.clientY - rect.top;
           const pct = Math.max(10, Math.min(90, (offsetY / rect.height) * 100));
           prevPane.style.flex = `0 0 ${pct}%`;
+          prevPane.style.height = `${pct}%`;
           nextPane.style.flex = `1 1 0%`;
         }
       };
@@ -724,13 +761,17 @@
       splitter.addEventListener('keydown', (e) => {
         if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
           e.preventDefault();
-          const currentFlex = parseFloat(prevPane.style.flex) || 50;
+          const currentFlexStr = prevPane.style.flex || '50';
+          const match = currentFlexStr.match(/(\d+(\.\d+)?)%/);
+          const currentFlex = match ? parseFloat(match[1]) : 50;
+
           let delta = 0;
           if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') delta = -5;
           if (e.key === 'ArrowRight' || e.key === 'ArrowDown') delta = 5;
 
           const newPct = Math.max(10, Math.min(90, currentFlex + delta));
           prevPane.style.flex = `0 0 ${newPct}%`;
+          if (isVertical) prevPane.style.height = `${newPct}%`;
           nextPane.style.flex = `1 1 0%`;
         }
       });
@@ -738,7 +779,27 @@
   }
 
   // ---------------------------------------------------------------------------
-  // 9. Global History Sync, Scoped Tree Navigation & Pane Toggles
+  // 9. Global Programmatic Tree APIs & Initialization Helper
+  // ---------------------------------------------------------------------------
+  window.scrantonExpandTree = function(containerEl) {
+    const container = containerEl || document;
+    container.querySelectorAll('.sc-tree ul').forEach(ul => ul.style.display = 'block');
+    container.querySelectorAll('.sc-tree-node').forEach(n => n.setAttribute('aria-expanded', 'true'));
+  };
+
+  window.scrantonCollapseTree = function(containerEl) {
+    const container = containerEl || document;
+    container.querySelectorAll('.sc-tree ul').forEach(ul => ul.style.display = 'none');
+    container.querySelectorAll('.sc-tree-node').forEach(n => n.setAttribute('aria-expanded', 'false'));
+  };
+
+  window.scrantonInitAll = function() {
+    initTableSorting();
+    initSplitters();
+  };
+
+  // ---------------------------------------------------------------------------
+  // 10. Global Event Delegation & Form Control Helpers
   // ---------------------------------------------------------------------------
   window.addEventListener('popstate', () => {
     document.querySelectorAll('scranton-tabs[sync-url]').forEach(tabs => tabs.render());
@@ -755,6 +816,44 @@
   function initGlobalHandlers() {
     initTableSorting();
     initSplitters();
+
+    // Input Clear Affordance Click Delegation (.sc-input-clear)
+    document.addEventListener('click', (e) => {
+      const clearBtn = e.target.closest('.sc-input-clear');
+      if (clearBtn) {
+        const wrapper = clearBtn.closest('.sc-input-wrapper');
+        if (wrapper) {
+          const input = wrapper.querySelector('.sc-input');
+          if (input) {
+            input.value = '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+            input.focus();
+          }
+        }
+      }
+    });
+
+    // Alert Banner Close Delegation (.sc-alert-close)
+    document.addEventListener('click', (e) => {
+      const closeBtn = e.target.closest('.sc-alert-close');
+      if (closeBtn && !closeBtn.closest('#sc-toast-container')) {
+        const alert = closeBtn.closest('.sc-alert');
+        if (alert) alert.remove();
+      }
+    });
+
+    // Statusbar Interactive Keyboard Operability
+    document.querySelectorAll('.sc-statusbar-item-interactive').forEach(item => {
+      if (!item.hasAttribute('tabindex')) item.setAttribute('tabindex', '0');
+      if (!item.hasAttribute('role')) item.setAttribute('role', 'button');
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          item.click();
+        }
+      });
+    });
 
     // Data Table Row Selection (Guarded & set aria-selected)
     document.addEventListener('click', (e) => {
@@ -781,7 +880,10 @@
       const parentLi = node.closest('li');
       if (parentLi) {
         const subUl = parentLi.querySelector(':scope > ul');
-        if (subUl) node.setAttribute('aria-expanded', subUl.style.display !== 'none' ? 'true' : 'false');
+        if (subUl) {
+          const isVisible = window.getComputedStyle(subUl).display !== 'none';
+          node.setAttribute('aria-expanded', isVisible ? 'true' : 'false');
+        }
       }
     });
 
@@ -792,7 +894,7 @@
         if (parentLi) {
           const subUl = parentLi.querySelector(':scope > ul');
           if (subUl) {
-            const isHidden = subUl.style.display === 'none';
+            const isHidden = window.getComputedStyle(subUl).display === 'none';
             subUl.style.display = isHidden ? 'block' : 'none';
             treeNode.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
           }
@@ -827,14 +929,14 @@
       } else if (e.key === 'ArrowRight') {
         const parentLi = treeNode.closest('li');
         const subUl = parentLi ? parentLi.querySelector(':scope > ul') : null;
-        if (subUl && subUl.style.display === 'none') {
+        if (subUl && window.getComputedStyle(subUl).display === 'none') {
           e.preventDefault();
           treeNode.click();
         }
       } else if (e.key === 'ArrowLeft') {
         const parentLi = treeNode.closest('li');
         const subUl = parentLi ? parentLi.querySelector(':scope > ul') : null;
-        if (subUl && subUl.style.display !== 'none') {
+        if (subUl && window.getComputedStyle(subUl).display !== 'none') {
           e.preventDefault();
           treeNode.click();
         }
@@ -852,7 +954,7 @@
           if (body) {
             const isHidden = body.style.display === 'none';
             body.style.display = isHidden ? 'block' : 'none';
-            pane.classList.toggle('collapsed', isHidden);
+            pane.classList.toggle('collapsed', !isHidden);
             toggleBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
           }
         }
